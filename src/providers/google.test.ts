@@ -12,7 +12,7 @@ describe('Google Provider', () => {
 
     expect(provider.id).toBe('google');
     expect(provider.name).toBe('Google');
-    expect(provider.type).toBe('oauth');
+    expect(provider.type).toBe('oidc');
   });
 
   it('기본 scope를 포함한다', () => {

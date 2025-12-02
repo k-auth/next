@@ -12,7 +12,7 @@ describe('Apple Provider', () => {
 
     expect(provider.id).toBe('apple');
     expect(provider.name).toBe('Apple');
-    expect(provider.type).toBe('oauth');
+    expect(provider.type).toBe('oidc');
   });
 
   it('기본 scope를 포함한다', () => {
@@ -60,7 +60,7 @@ describe('Apple Provider', () => {
     expect(result.email).toBe('test@example.com');
   });
 
-  it('이후 로그인 시 sub와 email만으로 프로필을 생성한다', async () => {
+  it('이후 로그인 시 sub와 email만으로 프로필을 생성한다 (name은 email로 fallback)', async () => {
     const provider = Apple(baseOptions);
     const mockProfile = {
       sub: 'apple-user-id',
@@ -70,7 +70,8 @@ describe('Apple Provider', () => {
     const result = await provider.profile!(mockProfile, {} as never);
 
     expect(result.id).toBe('apple-user-id');
-    expect(result.name).toBeUndefined();
+    // user.name이 없으면 email을 name으로 사용
+    expect(result.name).toBe('test@example.com');
     expect(result.email).toBe('test@example.com');
   });
 });

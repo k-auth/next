@@ -31,6 +31,8 @@ export interface KakaoProfile {
 export interface KakaoOptions {
   clientId: string;
   clientSecret: string;
+  /** 이메일 수집 여부 */
+  collectEmail?: boolean;
   /** 전화번호 수집 여부 */
   collectPhone?: boolean;
   /** 생년월일 수집 여부 */
@@ -45,6 +47,7 @@ export interface KakaoOptions {
 
 // 카카오 scope 매핑
 const SCOPE_MAP = {
+  collectEmail: 'account_email',
   collectPhone: 'phone_number',
   collectBirth: 'birthday,birthyear',
   collectGender: 'gender',
@@ -68,13 +71,13 @@ const SCOPE_MAP = {
  * ```
  */
 export function Kakao(options: KakaoOptions): OAuthConfig<KakaoProfile> {
-  const { clientId, clientSecret, collectPhone, collectBirth, collectGender, collectAgeRange, collectCI } = options;
+  const { clientId, clientSecret, collectEmail = true, collectPhone, collectBirth, collectGender, collectAgeRange, collectCI } = options;
 
-  // 옵션에 따라 scope 자동 구성
-  const scopes: string[] = ['profile_nickname', 'profile_image', 'account_email'];
+  // 옵션에 따라 scope 자동 구성 (프로필 닉네임, 이미지는 필수)
+  const scopes: string[] = ['profile_nickname', 'profile_image'];
 
   // 추가 수집 항목 처리
-  const collectOptions = { collectPhone, collectBirth, collectGender, collectAgeRange, collectCI };
+  const collectOptions = { collectEmail, collectPhone, collectBirth, collectGender, collectAgeRange, collectCI };
   (Object.keys(SCOPE_MAP) as Array<keyof typeof SCOPE_MAP>).forEach((key) => {
     if (collectOptions[key]) {
       scopes.push(...SCOPE_MAP[key].split(','));

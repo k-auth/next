@@ -34,8 +34,17 @@ export { KAuth } from '@/core';
 export type { KAuthConfig, KAuthResult } from '@/core';
 
 // Providers (개별 사용 시)
-export { Kakao, Naver } from '@/providers';
-export type { KakaoOptions, KakaoProfile, NaverOptions, NaverProfile } from '@/providers';
+export { Kakao, Naver, Google, Apple } from '@/providers';
+export type {
+  KakaoOptions,
+  KakaoProfile,
+  NaverOptions,
+  NaverProfile,
+  GoogleOptions,
+  GoogleProfile,
+  AppleOptions,
+  AppleProfile,
+} from '@/providers';
 
 // UI Components
 export { Button, KakaoButton, NaverButton, GoogleButton, AppleButton, ButtonGroup } from '@/ui';

@@ -16,4 +16,4 @@ export interface KAuthUser {
 }
 
 /** Provider 타입 */
-export type KAuthProvider = 'kakao' | 'naver';
+export type KAuthProvider = 'kakao' | 'naver' | 'google' | 'apple';

@@ -1,7 +1,8 @@
-import type { OAuthConfig } from 'next-auth/providers';
+import type { OIDCConfig } from 'next-auth/providers';
 
 /**
  * Google 사용자 프로필 타입
+ * @see https://developers.google.com/identity/openid-connect/openid-connect
  */
 export interface GoogleProfile {
   sub: string;
@@ -24,23 +25,30 @@ export interface GoogleOptions {
   collectProfile?: boolean;
   /** 이메일 수집 여부 (기본값: true) */
   collectEmail?: boolean;
+  /**
+   * 매번 동의 화면 표시 여부 (기본값: false)
+   * @remarks true로 설정하면 refresh_token을 항상 받을 수 있음
+   */
+  forceConsent?: boolean;
 }
 
 /**
- * Google 로그인 Provider
+ * Google 로그인 Provider (OIDC 기반)
  *
  * @example
  * ```ts
- * import { Google } from '@relkimm/k-auth/providers';
+ * import { Google } from '@k-auth/next/providers';
  *
  * Google({
  *   clientId: process.env.GOOGLE_ID!,
  *   clientSecret: process.env.GOOGLE_SECRET!,
  * })
  * ```
+ *
+ * @see https://authjs.dev/getting-started/providers/google
  */
-export function Google(options: GoogleOptions): OAuthConfig<GoogleProfile> {
-  const { clientId, clientSecret, collectProfile = true, collectEmail = true } = options;
+export function Google(options: GoogleOptions): OIDCConfig<GoogleProfile> {
+  const { clientId, clientSecret, collectProfile = true, collectEmail = true, forceConsent = false } = options;
 
   const scopes: string[] = ['openid'];
 
@@ -55,20 +63,21 @@ export function Google(options: GoogleOptions): OAuthConfig<GoogleProfile> {
   return {
     id: 'google',
     name: 'Google',
-    type: 'oauth',
+    type: 'oidc',
     clientId,
     clientSecret,
+    // OIDC Discovery로 자동 구성
+    issuer: 'https://accounts.google.com',
     authorization: {
-      url: 'https://accounts.google.com/o/oauth2/v2/auth',
       params: {
         scope: scopes.join(' '),
-        response_type: 'code',
-        access_type: 'offline',
-        prompt: 'consent',
+        // forceConsent: true면 매번 동의 화면 표시 + refresh_token 획득
+        ...(forceConsent && {
+          prompt: 'consent',
+          access_type: 'offline',
+        }),
       },
     },
-    token: 'https://oauth2.googleapis.com/token',
-    userinfo: 'https://openidconnect.googleapis.com/v1/userinfo',
     profile(profile) {
       return {
         id: profile.sub,
