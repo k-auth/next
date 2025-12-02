@@ -1,64 +1,58 @@
 # K-Auth
 
-Next.js에서 카카오, 네이버, 구글, 애플 로그인을 가장 쉽게 구현하는 방법.
+**설정 한 줄, 버튼 한 줄, 에러는 한국어로.**
 
-## 왜 K-Auth인가요?
+Next.js에서 카카오, 네이버, 구글, 애플 로그인을 가장 쉽게 구현하세요.
 
-next-auth(Auth.js)는 훌륭한 인증 라이브러리입니다. 하지만 한국 서비스를 만들 때 몇 가지 불편함이 있습니다:
+## 왜 K-Auth를 만들었나요?
 
-- **카카오/네이버 공식 provider가 없습니다** - 매번 커스텀 provider를 만들어야 합니다
-- **버튼 디자인을 직접 구현해야 합니다** - 각 서비스의 가이드라인을 찾아 색상, 아이콘, 크기를 맞춰야 합니다
-- **영어 에러 메시지** - 문제가 생겼을 때 원인 파악이 어렵습니다
+next-auth에 카카오/네이버 Provider가 있긴 해요. 그런데 직접 써보셨다면 아실 거예요:
 
-K-Auth는 이 문제들을 해결합니다.
+- **네이버 로그인이 갑자기 안 돼요** - `expires_in` 타입 에러... 네이버가 OAuth 스펙을 안 지켜서 생기는 문제예요
+- **scope 설정이 복잡해요** - 전화번호 받으려면 `phone_number`인지 `account/phone`인지 문서 뒤져야 해요
+- **버튼을 또 만들어야 해요** - 카카오 노란색이 `#FEE500`인지 `#FFEB00`인지, 가이드라인 찾느라 시간 다 가요
+- **에러가 영어예요** - `Invalid redirect_uri`라는데, 뭘 어떻게 고치라는 건지...
 
-## 핵심 기능
+K-Auth는 이런 삽질을 대신 해뒀어요.
 
-### 4대 Provider 내장
+## 이렇게 달라져요
 
-카카오, 네이버, 구글, 애플 OAuth provider가 모두 내장되어 있습니다. clientId와 clientSecret만 넣으면 됩니다.
+### 설정이 간단해요
 
 ```typescript
-import { KAuth } from '@k-auth/next';
-
+// 그냥 이게 끝이에요
 export const { handlers, auth, signIn, signOut } = KAuth({
-  kakao: { clientId: '...', clientSecret: '...' },
-  naver: { clientId: '...', clientSecret: '...' },
-  google: { clientId: '...', clientSecret: '...' },
-  apple: { clientId: '...', clientSecret: '...' },
-});
-```
-
-### 공식 디자인 버튼
-
-각 서비스의 [디자인 가이드라인](https://developers.kakao.com/docs/latest/ko/kakaologin/design-guide)을 준수한 버튼 컴포넌트를 제공합니다.
-
-```tsx
-import { Button } from '@k-auth/next/ui';
-
-<Button.Kakao onClick={() => signIn('kakao')} />
-<Button.Naver onClick={() => signIn('naver')} />
-<Button.Google onClick={() => signIn('google')} />
-<Button.Apple onClick={() => signIn('apple')} />
-```
-
-### 직관적인 옵션
-
-전화번호, 생년월일 같은 추가 정보가 필요할 때 scope를 직접 찾을 필요 없습니다.
-
-```typescript
-KAuth({
   kakao: {
-    clientId: '...',
-    clientSecret: '...',
-    collect: { phone: true },  // 이게 끝
+    clientId: process.env.KAKAO_CLIENT_ID!,
+    clientSecret: process.env.KAKAO_CLIENT_SECRET!,
+    collect: { email: true, phone: true },  // scope? 몰라도 돼요
   },
 });
 ```
 
-### next-auth 호환
+### 버튼은 이미 있어요
 
-next-auth의 모든 기능을 그대로 사용할 수 있습니다. GitHub, Discord 등 다른 provider도 함께 쓸 수 있습니다.
+각 서비스 [디자인 가이드라인](https://developers.kakao.com/docs/latest/ko/kakaologin/design-guide) 100% 준수. 색상, 아이콘, 텍스트 다 맞춰뒀어요.
+
+```tsx
+import { Button } from '@k-auth/next/ui';
+
+<Button.Kakao onClick={() => signIn('kakao')} />  // 끝
+```
+
+### 에러는 한국어로
+
+```
+[K-Auth 오류] KAKAO_INVALID_REDIRECT_URI
+
+메시지: Redirect URI가 등록되지 않았습니다.
+힌트: 카카오 개발자센터 > 카카오 로그인 > Redirect URI에
+      http://localhost:3000/api/auth/callback/kakao 를 추가하세요.
+```
+
+### next-auth 그대로 써요
+
+K-Auth는 next-auth를 래핑했을 뿐이에요. GitHub, Discord 같은 다른 Provider도 함께 쓸 수 있어요.
 
 ```typescript
 import GitHub from 'next-auth/providers/github';
@@ -72,15 +66,14 @@ KAuth({
 });
 ```
 
-## 요구사항
-
-- Next.js 14 이상
-- React 18 이상
-
-## 시작하기
+## 시작할 준비 되셨나요?
 
 ```bash
 npm install @k-auth/next
 ```
 
-[설치 가이드 →](/installation)
+[5분 만에 로그인 구현하기 →](/quick-start)
+
+---
+
+**요구사항**: Next.js 14+, React 18+
