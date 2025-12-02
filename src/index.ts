@@ -38,8 +38,8 @@ export { Kakao, Naver } from '@/providers';
 export type { KakaoOptions, KakaoProfile, NaverOptions, NaverProfile } from '@/providers';
 
 // UI Components
-export { Button, KakaoButton, NaverButton, ButtonGroup } from '@/ui';
-export type { KakaoButtonProps, NaverButtonProps, ButtonGroupProps } from '@/ui';
+export { Button, KakaoButton, NaverButton, GoogleButton, AppleButton, ButtonGroup } from '@/ui';
+export type { KakaoButtonProps, NaverButtonProps, GoogleButtonProps, AppleButtonProps, ButtonGroupProps } from '@/ui';
 
 // Types
 export type { KAuthUser, KAuthProvider } from '@/types';

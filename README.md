@@ -2,7 +2,7 @@
 
 **한국형 소셜 로그인, 설정 10초 & 디자인 0초**
 
-카카오, 네이버 로그인을 Next.js에서 가장 쉽게 구현하는 방법.
+카카오, 네이버, 구글, 애플 로그인을 Next.js에서 가장 쉽게 구현하는 방법.
 
 ## 특징
 
@@ -14,7 +14,7 @@
 ## 설치
 
 ```bash
-npm install k-auth next-auth@beta
+npm install k-auth next-auth
 ```
 
 ## 빠른 시작
@@ -23,17 +23,31 @@ npm install k-auth next-auth@beta
 
 ```typescript
 import { KAuth } from 'k-auth';
+import Google from 'next-auth/providers/google';
+import Apple from 'next-auth/providers/apple';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
     clientId: process.env.KAKAO_CLIENT_ID!,
     clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-    collectPhone: true,  // 전화번호 수집
-    collectBirth: true,  // 생년월일 수집
+    collectPhone: true,
   },
   naver: {
     clientId: process.env.NAVER_CLIENT_ID!,
     clientSecret: process.env.NAVER_CLIENT_SECRET!,
+  },
+  // 구글/애플은 next-auth provider 사용
+  nextAuthConfig: {
+    providers: [
+      Google({
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      }),
+      Apple({
+        clientId: process.env.APPLE_CLIENT_ID!,
+        clientSecret: process.env.APPLE_CLIENT_SECRET!,
+      }),
+    ],
   },
 });
 ```
@@ -57,6 +71,8 @@ export default function LoginPage() {
     <Button.Group>
       <Button.Kakao onClick={() => signIn('kakao')} />
       <Button.Naver onClick={() => signIn('naver')} />
+      <Button.Google onClick={() => signIn('google')} />
+      <Button.Apple onClick={() => signIn('apple')} />
     </Button.Group>
   );
 }
@@ -64,17 +80,57 @@ export default function LoginPage() {
 
 끝! 이게 전부입니다.
 
+## UI 컴포넌트
+
+### 지원하는 버튼
+
+```tsx
+import { Button } from 'k-auth/ui';
+
+<Button.Kakao />   // 카카오 노란색
+<Button.Naver />   // 네이버 초록색
+<Button.Google />  // 구글 흰색
+<Button.Apple />   // 애플 검은색
+```
+
+### 크기 옵션
+
+```tsx
+<Button.Kakao size="sm" />    // 작게
+<Button.Kakao size="default" /> // 기본
+<Button.Kakao size="lg" />    // 크게
+<Button.Kakao size="icon" />  // 아이콘만
+```
+
+### Button.Group
+
+```tsx
+// 세로 배치 (기본)
+<Button.Group>
+  <Button.Kakao />
+  <Button.Naver />
+</Button.Group>
+
+// 가로 배치
+<Button.Group direction="row">
+  <Button.Kakao size="icon" />
+  <Button.Naver size="icon" />
+</Button.Group>
+
+// 간격 조절
+<Button.Group gap="sm" />  // 좁게
+<Button.Group gap="lg" />  // 넓게
+```
+
 ## API
 
 ### KAuth(config)
 
-메인 설정 함수입니다.
-
 ```typescript
 KAuth({
-  kakao: KakaoOptions,
-  naver: NaverOptions,
-  nextAuthConfig?: NextAuthConfig,  // 고급 설정
+  kakao?: KakaoOptions,
+  naver?: NaverOptions,
+  nextAuthConfig?: NextAuthConfig,  // 구글/애플 등 추가
 })
 ```
 
@@ -100,45 +156,6 @@ KAuth({
 | `collectGender` | `boolean` | 성별 수집 |
 | `collectName` | `boolean` | 실명 수집 |
 
-## UI 컴포넌트
-
-### Button.Kakao / Button.Naver
-
-```tsx
-import { Button } from 'k-auth/ui';
-
-// 기본
-<Button.Kakao onClick={() => signIn('kakao')} />
-
-// 크기 조절
-<Button.Kakao size="sm" />  // 작게
-<Button.Kakao size="lg" />  // 크게
-<Button.Kakao size="icon" />  // 아이콘만
-
-// 커스텀 스타일
-<Button.Kakao className="w-full shadow-lg" />
-```
-
-### Button.Group
-
-```tsx
-// 세로 배치 (기본)
-<Button.Group>
-  <Button.Kakao />
-  <Button.Naver />
-</Button.Group>
-
-// 가로 배치
-<Button.Group direction="row">
-  <Button.Kakao size="icon" />
-  <Button.Naver size="icon" />
-</Button.Group>
-
-// 간격 조절
-<Button.Group gap="sm" />  // 좁게
-<Button.Group gap="lg" />  // 넓게
-```
-
 ## 환경 변수
 
 ```env
@@ -150,33 +167,23 @@ KAKAO_CLIENT_SECRET=your_kakao_client_secret
 NAVER_CLIENT_ID=your_naver_client_id
 NAVER_CLIENT_SECRET=your_naver_client_secret
 
+# 구글
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# 애플
+APPLE_CLIENT_ID=your_apple_client_id
+APPLE_CLIENT_SECRET=your_apple_client_secret
+
 # NextAuth
 AUTH_SECRET=your_random_secret_key
 ```
-
-## 카카오/네이버 앱 설정
-
-### 카카오
-
-1. [Kakao Developers](https://developers.kakao.com)에서 앱 생성
-2. 앱 키 > REST API 키 복사 → `KAKAO_CLIENT_ID`
-3. 보안 > Client Secret 생성 → `KAKAO_CLIENT_SECRET`
-4. 카카오 로그인 활성화
-5. Redirect URI 등록: `http://localhost:3000/api/auth/callback/kakao`
-
-### 네이버
-
-1. [NAVER Developers](https://developers.naver.com)에서 앱 등록
-2. Client ID 복사 → `NAVER_CLIENT_ID`
-3. Client Secret 복사 → `NAVER_CLIENT_SECRET`
-4. 서비스 URL: `http://localhost:3000`
-5. Callback URL: `http://localhost:3000/api/auth/callback/naver`
 
 ## 요구사항
 
 - Next.js 14+
 - React 18+
-- next-auth 5 (beta)
+- next-auth 5+
 
 ## 라이센스
 
