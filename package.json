@@ -25,7 +25,8 @@
   },
   "files": [
     "dist",
-    "llms.txt"
+    "llms.txt",
+    "llms-full.txt"
   ],
   "scripts": {
     "build": "tsup",
