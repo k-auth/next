@@ -123,7 +123,7 @@ export function Kakao(options: KakaoOptions): OAuthConfig<KakaoProfile> {
     clientSecret,
     authorization: {
       url: 'https://kauth.kakao.com/oauth/authorize',
-      params: { scope: scopes.join(' ') },
+      params: scopes.length > 0 ? { scope: scopes.join(' ') } : {},
     },
     token: 'https://kauth.kakao.com/oauth/token',
     userinfo: 'https://kapi.kakao.com/v2/user/me',

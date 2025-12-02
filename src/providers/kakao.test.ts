@@ -15,11 +15,11 @@ describe('Kakao Provider', () => {
     expect(provider.type).toBe('oauth');
   });
 
-  it('collect 없이 생성하면 scope가 비어있다', () => {
+  it('collect 없이 생성하면 scope 파라미터가 없다', () => {
     const provider = Kakao(baseOptions);
-    const authParams = provider.authorization as { url: string; params: { scope: string } };
+    const authParams = provider.authorization as { url: string; params: Record<string, string> };
 
-    expect(authParams.params.scope).toBe('');
+    expect(authParams.params.scope).toBeUndefined();
   });
 
   it('collect.profile이 true면 프로필 scope를 추가한다', () => {
