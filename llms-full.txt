@@ -1,17 +1,28 @@
 # K-Auth
 
-> 한국형 소셜 로그인 라이브러리 for Next.js (v0.2.0)
+> 설정 한 줄, 버튼 한 줄, 에러는 한국어로. (v0.2.0)
 
-K-Auth는 카카오, 네이버, 구글, 애플 로그인을 Next.js에서 가장 쉽게 구현할 수 있는 라이브러리입니다.
+Next.js에서 카카오, 네이버, 구글, 애플 로그인을 가장 쉽게 구현하세요.
 next-auth(Auth.js) v5를 래핑하여 한국 개발자를 위한 편의 기능을 제공합니다.
 
 - npm: https://www.npmjs.com/package/@k-auth/next
 
 ---
 
+# 왜 K-Auth인가요?
+
+next-auth에 카카오/네이버 Provider가 있긴 해요. 그런데 직접 써보면:
+
+- **네이버가 갑자기 안 돼요** - `expires_in` 타입 에러 (네이버가 OAuth 스펙을 안 지켜서 생김)
+- **scope가 뭔지 모르겠어요** - 전화번호는 `phone_number`? `account/phone`?
+- **버튼을 또 만들어야 해요** - 카카오 노란색이 `#FEE500`인가 `#FFEB00`인가...
+- **에러가 영어예요** - `Invalid redirect_uri`가 뭔데...
+
+K-Auth는 이런 삽질을 대신 해뒀어요.
+
 # 주요 기능
 
-- 카카오/네이버/구글/애플 OAuth Provider 내장
+- 카카오/네이버/구글/애플 OAuth Provider 내장 (네이버 버그 수정됨)
 - 공식 디자인 가이드를 준수한 로그인 버튼 컴포넌트
 - 한국어 에러 메시지
 - `collect: { phone: true }` 같은 직관적인 옵션으로 scope 자동 설정
