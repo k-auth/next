@@ -2,7 +2,7 @@
 
 각 서비스의 개발자 콘솔에서 앱을 생성하고 인증 정보를 발급받습니다.
 
-import { Tabs } from 'nextra/components'
+import { Tabs, Callout } from 'nextra/components'
 
 <Tabs items={['카카오', '네이버', '구글', '애플']}>
   <Tabs.Tab>
@@ -130,8 +130,6 @@ import { Tabs } from 'nextra/components'
 
   <Tabs.Tab>
     ## 애플 설정
-
-    import { Callout } from 'nextra/components'
 
     <Callout type="warning">
       애플 로그인은 HTTPS가 필수입니다. localhost에서는 테스트가 어렵습니다.

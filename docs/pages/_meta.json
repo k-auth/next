@@ -1,78 +1,36 @@
 {
-  "index": {
-    "title": "소개",
-    "description": "K-Auth - Next.js 카카오/네이버 소셜 로그인 라이브러리"
-  },
+  "index": "소개",
   "-- Getting Started": {
     "type": "separator",
     "title": "시작하기"
   },
-  "installation": {
-    "title": "설치",
-    "description": "K-Auth 패키지 설치 방법"
-  },
-  "quick-start": {
-    "title": "빠른 시작",
-    "description": "5분 안에 카카오/네이버 로그인 구현하기"
-  },
-  "console-setup": {
-    "title": "콘솔 설정",
-    "description": "카카오/네이버 개발자 콘솔 설정 가이드"
-  },
+  "installation": "설치",
+  "quick-start": "빠른 시작",
+  "console-setup": "콘솔 설정",
   "-- Components": {
     "type": "separator",
     "title": "컴포넌트"
   },
-  "buttons": {
-    "title": "버튼",
-    "description": "소셜 로그인 버튼 컴포넌트 사용법"
-  },
+  "buttons": "버튼",
   "-- Configuration": {
     "type": "separator",
     "title": "설정"
   },
-  "providers": {
-    "title": "Provider",
-    "description": "카카오, 네이버 등 OAuth Provider 설정"
-  },
-  "options": {
-    "title": "옵션",
-    "description": "KAuth 설정 옵션 레퍼런스"
-  },
-  "nextauth-config": {
-    "title": "NextAuth 연동",
-    "description": "기존 NextAuth 설정과 함께 사용하기"
-  },
+  "providers": "Provider",
+  "options": "옵션",
+  "nextauth-config": "NextAuth 연동",
   "-- Advanced": {
     "type": "separator",
     "title": "고급"
   },
-  "session": {
-    "title": "세션 관리",
-    "description": "서버/클라이언트 세션 조회 및 관리"
-  },
-  "middleware": {
-    "title": "미들웨어",
-    "description": "인증 미들웨어로 페이지 보호하기"
-  },
-  "errors": {
-    "title": "에러 처리",
-    "description": "K-Auth 에러 코드 및 처리 방법"
-  },
+  "session": "세션 관리",
+  "middleware": "미들웨어",
+  "errors": "에러 처리",
   "-- Resources": {
     "type": "separator",
     "title": "참고"
   },
-  "examples": {
-    "title": "예제",
-    "description": "실제 구현 예제 코드"
-  },
-  "faq": {
-    "title": "자주 묻는 질문",
-    "description": "K-Auth 관련 FAQ"
-  },
-  "troubleshooting": {
-    "title": "문제 해결",
-    "description": "자주 발생하는 문제와 해결 방법"
-  }
+  "examples": "예제",
+  "faq": "자주 묻는 질문",
+  "troubleshooting": "문제 해결"
 }
