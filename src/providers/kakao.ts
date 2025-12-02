@@ -26,63 +26,94 @@ export interface KakaoProfile {
 }
 
 /**
+ * 카카오 수집 옵션
+ * @remarks 모든 옵션의 기본값은 false입니다.
+ */
+export interface KakaoCollectOptions {
+  /** 이메일 수집 @default false */
+  email?: boolean;
+  /** 프로필 정보 수집 (닉네임, 프로필 이미지) @default false */
+  profile?: boolean;
+  /** 전화번호 수집 @default false */
+  phone?: boolean;
+  /** 생년월일 수집 @default false */
+  birthday?: boolean;
+  /** 성별 수집 @default false */
+  gender?: boolean;
+  /** 연령대 수집 @default false */
+  ageRange?: boolean;
+  /** CI(연계정보) 수집 - 카카오싱크 비즈니스 전용 @default false */
+  ci?: boolean;
+}
+
+/**
  * 카카오 Provider 옵션
  */
 export interface KakaoOptions {
   clientId: string;
   clientSecret: string;
-  /** 이메일 수집 여부 */
-  collectEmail?: boolean;
-  /** 전화번호 수집 여부 */
-  collectPhone?: boolean;
-  /** 생년월일 수집 여부 */
-  collectBirth?: boolean;
-  /** 성별 수집 여부 */
-  collectGender?: boolean;
-  /** 연령대 수집 여부 */
-  collectAgeRange?: boolean;
-  /** CI(연계정보) 수집 여부 - 카카오싱크 비즈니스 전용 */
-  collectCI?: boolean;
+  /** 수집 옵션 (기본값: 모두 false) */
+  collect?: KakaoCollectOptions;
 }
-
-// 카카오 scope 매핑
-const SCOPE_MAP = {
-  collectEmail: 'account_email',
-  collectPhone: 'phone_number',
-  collectBirth: 'birthday,birthyear',
-  collectGender: 'gender',
-  collectAgeRange: 'age_range',
-  collectCI: 'account_ci',
-} as const;
 
 /**
  * 카카오 로그인 Provider
  *
  * @example
  * ```ts
- * import { Kakao } from 'k-auth/providers';
+ * import { Kakao } from '@k-auth/next/providers';
  *
  * Kakao({
  *   clientId: process.env.KAKAO_ID!,
  *   clientSecret: process.env.KAKAO_SECRET!,
- *   collectPhone: true,
- *   collectBirth: true,
+ *   collect: {
+ *     email: true,
+ *     profile: true,
+ *     phone: true,
+ *   },
  * })
  * ```
  */
 export function Kakao(options: KakaoOptions): OAuthConfig<KakaoProfile> {
-  const { clientId, clientSecret, collectEmail = true, collectPhone, collectBirth, collectGender, collectAgeRange, collectCI } = options;
+  const { clientId, clientSecret, collect = {} } = options;
+  const { email, profile, phone, birthday, gender, ageRange, ci } = collect;
 
-  // 옵션에 따라 scope 자동 구성 (프로필 닉네임, 이미지는 필수)
-  const scopes: string[] = ['profile_nickname', 'profile_image'];
+  const scopes: string[] = [];
 
-  // 추가 수집 항목 처리
-  const collectOptions = { collectEmail, collectPhone, collectBirth, collectGender, collectAgeRange, collectCI };
-  (Object.keys(SCOPE_MAP) as Array<keyof typeof SCOPE_MAP>).forEach((key) => {
-    if (collectOptions[key]) {
-      scopes.push(...SCOPE_MAP[key].split(','));
-    }
-  });
+  // 프로필 정보
+  if (profile) {
+    scopes.push('profile_nickname', 'profile_image');
+  }
+
+  // 이메일
+  if (email) {
+    scopes.push('account_email');
+  }
+
+  // 전화번호
+  if (phone) {
+    scopes.push('phone_number');
+  }
+
+  // 생년월일
+  if (birthday) {
+    scopes.push('birthday', 'birthyear');
+  }
+
+  // 성별
+  if (gender) {
+    scopes.push('gender');
+  }
+
+  // 연령대
+  if (ageRange) {
+    scopes.push('age_range');
+  }
+
+  // CI (카카오싱크 비즈니스 전용)
+  if (ci) {
+    scopes.push('account_ci');
+  }
 
   return {
     id: 'kakao',

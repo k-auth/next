@@ -15,28 +15,25 @@ describe('Apple Provider', () => {
     expect(provider.type).toBe('oidc');
   });
 
-  it('기본 scope를 포함한다', () => {
+  it('collect 없이 생성하면 scope가 비어있다', () => {
     const provider = Apple(baseOptions);
-    const authParams = provider.authorization as { url: string; params: { scope: string } };
+    const authParams = provider.authorization as { params: { scope: string } };
 
-    expect(authParams.params.scope).toContain('name');
-    expect(authParams.params.scope).toContain('email');
+    expect(authParams.params.scope).toBe('');
   });
 
-  it('collectName이 false면 name scope를 제외한다', () => {
-    const provider = Apple({ ...baseOptions, collectName: false });
-    const authParams = provider.authorization as { url: string; params: { scope: string } };
+  it('collect.name이 true면 name scope를 추가한다', () => {
+    const provider = Apple({ ...baseOptions, collect: { name: true } });
+    const authParams = provider.authorization as { params: { scope: string } };
 
-    expect(authParams.params.scope).not.toContain('name');
-    expect(authParams.params.scope).toContain('email');
+    expect(authParams.params.scope).toContain('name');
   });
 
-  it('collectEmail이 false면 email scope를 제외한다', () => {
-    const provider = Apple({ ...baseOptions, collectEmail: false });
-    const authParams = provider.authorization as { url: string; params: { scope: string } };
+  it('collect.email이 true면 email scope를 추가한다', () => {
+    const provider = Apple({ ...baseOptions, collect: { email: true } });
+    const authParams = provider.authorization as { params: { scope: string } };
 
-    expect(authParams.params.scope).not.toContain('email');
-    expect(authParams.params.scope).toContain('name');
+    expect(authParams.params.scope).toContain('email');
   });
 
   it('최초 로그인 시 user 정보로 프로필을 생성한다', async () => {

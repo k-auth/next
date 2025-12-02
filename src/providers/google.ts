@@ -16,15 +16,24 @@ export interface GoogleProfile {
 }
 
 /**
+ * Google 수집 옵션
+ * @remarks 모든 옵션의 기본값은 false입니다.
+ */
+export interface GoogleCollectOptions {
+  /** 이메일 수집 @default false */
+  email?: boolean;
+  /** 프로필 정보 수집 (이름, 프로필 사진) @default false */
+  profile?: boolean;
+}
+
+/**
  * Google Provider 옵션
  */
 export interface GoogleOptions {
   clientId: string;
   clientSecret: string;
-  /** 프로필 정보 수집 여부 (기본값: true) */
-  collectProfile?: boolean;
-  /** 이메일 수집 여부 (기본값: true) */
-  collectEmail?: boolean;
+  /** 수집 옵션 (기본값: 모두 false) */
+  collect?: GoogleCollectOptions;
   /**
    * 매번 동의 화면 표시 여부 (기본값: false)
    * @remarks true로 설정하면 refresh_token을 항상 받을 수 있음
@@ -42,21 +51,26 @@ export interface GoogleOptions {
  * Google({
  *   clientId: process.env.GOOGLE_ID!,
  *   clientSecret: process.env.GOOGLE_SECRET!,
+ *   collect: {
+ *     email: true,
+ *     profile: true,
+ *   },
  * })
  * ```
  *
  * @see https://authjs.dev/getting-started/providers/google
  */
 export function Google(options: GoogleOptions): OIDCConfig<GoogleProfile> {
-  const { clientId, clientSecret, collectProfile = true, collectEmail = true, forceConsent = false } = options;
+  const { clientId, clientSecret, collect = {}, forceConsent = false } = options;
+  const { email, profile } = collect;
 
   const scopes: string[] = ['openid'];
 
-  if (collectProfile) {
+  if (profile) {
     scopes.push('profile');
   }
 
-  if (collectEmail) {
+  if (email) {
     scopes.push('email');
   }
 

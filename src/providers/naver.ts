@@ -22,41 +22,71 @@ export interface NaverProfile {
 }
 
 /**
- * 네이버 Provider 옵션
+ * 네이버 수집 옵션
  *
  * @remarks
- * 네이버는 카카오와 달리 OAuth scope을 지원하지 않습니다.
- * 동의 항목은 네이버 개발자센터에서 직접 설정해야 합니다.
- * https://developers.naver.com/apps
+ * **⚠️ 중요: 네이버는 OAuth scope을 지원하지 않습니다.**
+ *
+ * 이 옵션들은 코드에서 실제로 동작하지 않으며,
+ * 네이버 개발자센터에서 직접 설정해야 합니다.
+ *
+ * 설정 위치: https://developers.naver.com/apps > 제공 정보 선택
+ *
+ * 이 타입은 어떤 정보를 수집할 것인지 문서화 목적으로 제공됩니다.
+ */
+export interface NaverCollectOptions {
+  /**
+   * 이메일 수집
+   * @remarks 개발자센터 > 제공 정보 선택 > 이메일 활성화 필요
+   */
+  email?: boolean;
+  /**
+   * 프로필 정보 수집 (별명, 프로필 사진)
+   * @remarks 개발자센터 > 제공 정보 선택 > 별명/프로필 사진 활성화 필요
+   */
+  profile?: boolean;
+  /**
+   * 전화번호 수집
+   * @remarks 개발자센터 > 제공 정보 선택 > 휴대전화번호 활성화 필요
+   */
+  phone?: boolean;
+  /**
+   * 생년월일 수집
+   * @remarks 개발자센터 > 제공 정보 선택 > 생일/출생연도 활성화 필요
+   */
+  birthday?: boolean;
+  /**
+   * 성별 수집
+   * @remarks 개발자센터 > 제공 정보 선택 > 성별 활성화 필요
+   */
+  gender?: boolean;
+  /**
+   * 연령대 수집
+   * @remarks 개발자센터 > 제공 정보 선택 > 연령대 활성화 필요
+   */
+  ageRange?: boolean;
+  /**
+   * 실명 수집
+   * @remarks 개발자센터 > 제공 정보 선택 > 이름 활성화 필요
+   */
+  name?: boolean;
+}
+
+/**
+ * 네이버 Provider 옵션
  */
 export interface NaverOptions {
   clientId: string;
   clientSecret: string;
   /**
-   * 전화번호 수집 여부
-   * @remarks 네이버 개발자센터 > 제공 정보 선택 > 휴대전화번호 활성화 필요
+   * 수집 옵션 (문서화 목적)
+   *
+   * @remarks
+   * **⚠️ 네이버는 scope을 지원하지 않습니다.**
+   * 실제 동의 항목은 네이버 개발자센터에서 설정해야 합니다.
+   * @see https://developers.naver.com/apps
    */
-  collectPhone?: boolean;
-  /**
-   * 생년월일 수집 여부
-   * @remarks 네이버 개발자센터 > 제공 정보 선택 > 생일/출생연도 활성화 필요
-   */
-  collectBirth?: boolean;
-  /**
-   * 성별 수집 여부
-   * @remarks 네이버 개발자센터 > 제공 정보 선택 > 성별 활성화 필요
-   */
-  collectGender?: boolean;
-  /**
-   * 연령대 수집 여부
-   * @remarks 네이버 개발자센터 > 제공 정보 선택 > 연령대 활성화 필요
-   */
-  collectAge?: boolean;
-  /**
-   * 실명 수집 여부
-   * @remarks 네이버 개발자센터 > 제공 정보 선택 > 이름 활성화 필요
-   */
-  collectName?: boolean;
+  collect?: NaverCollectOptions;
 }
 
 /**
@@ -64,26 +94,24 @@ export interface NaverOptions {
  *
  * @example
  * ```ts
- * import { Naver } from 'k-auth/providers';
+ * import { Naver } from '@k-auth/next/providers';
  *
+ * // 1. 네이버 개발자센터에서 동의 항목 먼저 설정
+ * // 2. collect는 문서화 목적 (실제 동작 X)
  * Naver({
  *   clientId: process.env.NAVER_ID!,
  *   clientSecret: process.env.NAVER_SECRET!,
- *   collectPhone: true,
+ *   collect: {
+ *     email: true,    // 개발자센터에서 설정 필요
+ *     profile: true,  // 개발자센터에서 설정 필요
+ *   },
  * })
  * ```
+ *
+ * @see https://developers.naver.com/apps
  */
 export function Naver(options: NaverOptions): OAuthConfig<NaverProfile> {
-  const { clientId, clientSecret, collectPhone, collectBirth, collectGender, collectAge, collectName } = options;
-
-  // 네이버는 scope 기반이 아니므로 개발자센터 설정 안내
-  const hasCollectOptions = collectPhone || collectBirth || collectGender || collectAge || collectName;
-  if (hasCollectOptions && typeof window === 'undefined') {
-    console.info(
-      '[K-Auth] 네이버는 개발자센터에서 동의 항목을 직접 설정해야 합니다.\n' +
-        '설정 위치: https://developers.naver.com/apps > 제공 정보 선택'
-    );
-  }
+  const { clientId, clientSecret } = options;
 
   return {
     id: 'naver',

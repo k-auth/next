@@ -5,13 +5,13 @@
  * @example
  * ```tsx
  * // auth.ts
- * import { KAuth } from 'k-auth';
+ * import { KAuth } from '@k-auth/next';
  *
  * export const { handlers, auth, signIn, signOut } = KAuth({
  *   kakao: {
  *     clientId: process.env.KAKAO_ID!,
  *     clientSecret: process.env.KAKAO_SECRET!,
- *     collectPhone: true,
+ *     collect: { email: true, profile: true, phone: true },
  *   },
  *   naver: {
  *     clientId: process.env.NAVER_ID!,
@@ -20,7 +20,7 @@
  * });
  *
  * // 로그인 페이지
- * import { Button } from 'k-auth/ui';
+ * import { Button } from '@k-auth/next/ui';
  *
  * <Button.Group>
  *   <Button.Kakao onClick={() => signIn('kakao')} />
@@ -38,12 +38,16 @@ export { Kakao, Naver, Google, Apple } from '@/providers';
 export type {
   KakaoOptions,
   KakaoProfile,
+  KakaoCollectOptions,
   NaverOptions,
   NaverProfile,
+  NaverCollectOptions,
   GoogleOptions,
   GoogleProfile,
+  GoogleCollectOptions,
   AppleOptions,
   AppleProfile,
+  AppleCollectOptions,
 } from '@/providers';
 
 // UI Components

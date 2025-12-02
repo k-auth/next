@@ -20,15 +20,27 @@ export interface AppleProfile {
 }
 
 /**
+ * Apple 수집 옵션
+ * @remarks 모든 옵션의 기본값은 false입니다.
+ */
+export interface AppleCollectOptions {
+  /** 이메일 수집 @default false */
+  email?: boolean;
+  /**
+   * 이름 수집 @default false
+   * @remarks Apple은 최초 로그인 시에만 이름을 제공합니다.
+   */
+  name?: boolean;
+}
+
+/**
  * Apple Provider 옵션
  */
 export interface AppleOptions {
   clientId: string;
   clientSecret: string;
-  /** 이름 수집 여부 (기본값: true) */
-  collectName?: boolean;
-  /** 이메일 수집 여부 (기본값: true) */
-  collectEmail?: boolean;
+  /** 수집 옵션 (기본값: 모두 false) */
+  collect?: AppleCollectOptions;
 }
 
 /**
@@ -41,6 +53,10 @@ export interface AppleOptions {
  * Apple({
  *   clientId: process.env.APPLE_ID!,
  *   clientSecret: process.env.APPLE_SECRET!,
+ *   collect: {
+ *     email: true,
+ *     name: true,
+ *   },
  * })
  * ```
  *
@@ -52,15 +68,16 @@ export interface AppleOptions {
  * @see https://authjs.dev/getting-started/providers/apple
  */
 export function Apple(options: AppleOptions): OIDCConfig<AppleProfile> {
-  const { clientId, clientSecret, collectName = true, collectEmail = true } = options;
+  const { clientId, clientSecret, collect = {} } = options;
+  const { email, name } = collect;
 
   const scopes: string[] = [];
 
-  if (collectName) {
+  if (name) {
     scopes.push('name');
   }
 
-  if (collectEmail) {
+  if (email) {
     scopes.push('email');
   }
 
@@ -87,11 +104,11 @@ export function Apple(options: AppleOptions): OIDCConfig<AppleProfile> {
       // user 정보는 id_token이 아닌 authorization response에 포함됨
       const firstName = profile.user?.name?.firstName;
       const lastName = profile.user?.name?.lastName;
-      const name = [firstName, lastName].filter(Boolean).join(' ') || profile.email || undefined;
+      const profileName = [firstName, lastName].filter(Boolean).join(' ') || profile.email || undefined;
 
       return {
         id: profile.sub,
-        name,
+        name: profileName,
         email: profile.email ?? profile.user?.email,
         image: null,
       };

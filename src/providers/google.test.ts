@@ -15,28 +15,26 @@ describe('Google Provider', () => {
     expect(provider.type).toBe('oidc');
   });
 
-  it('기본 scope를 포함한다', () => {
+  it('collect 없이 생성하면 openid만 포함한다', () => {
     const provider = Google(baseOptions);
-    const authParams = provider.authorization as { url: string; params: { scope: string } };
+    const authParams = provider.authorization as { params: { scope: string } };
 
-    expect(authParams.params.scope).toContain('openid');
+    expect(authParams.params.scope).toBe('openid');
+  });
+
+  it('collect.profile이 true면 profile scope를 추가한다', () => {
+    const provider = Google({ ...baseOptions, collect: { profile: true } });
+    const authParams = provider.authorization as { params: { scope: string } };
+
     expect(authParams.params.scope).toContain('profile');
-    expect(authParams.params.scope).toContain('email');
-  });
-
-  it('collectProfile이 false면 profile scope를 제외한다', () => {
-    const provider = Google({ ...baseOptions, collectProfile: false });
-    const authParams = provider.authorization as { url: string; params: { scope: string } };
-
-    expect(authParams.params.scope).not.toContain('profile');
     expect(authParams.params.scope).toContain('openid');
   });
 
-  it('collectEmail이 false면 email scope를 제외한다', () => {
-    const provider = Google({ ...baseOptions, collectEmail: false });
-    const authParams = provider.authorization as { url: string; params: { scope: string } };
+  it('collect.email이 true면 email scope를 추가한다', () => {
+    const provider = Google({ ...baseOptions, collect: { email: true } });
+    const authParams = provider.authorization as { params: { scope: string } };
 
-    expect(authParams.params.scope).not.toContain('email');
+    expect(authParams.params.scope).toContain('email');
     expect(authParams.params.scope).toContain('openid');
   });
 
