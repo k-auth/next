@@ -150,6 +150,29 @@ AUTH_SECRET=  # openssl rand -base64 32
 
 </details>
 
+<details>
+<summary>구글</summary>
+
+1. [Google Cloud Console](https://console.cloud.google.com) → 프로젝트 생성
+2. API 및 서비스 → 사용자 인증 정보 → OAuth 2.0 클라이언트 ID 만들기
+3. 애플리케이션 유형: 웹 애플리케이션
+4. 승인된 리디렉션 URI: `http://localhost:3000/api/auth/callback/google`
+5. Client ID, Secret 복사
+
+</details>
+
+<details>
+<summary>애플</summary>
+
+1. [Apple Developer](https://developer.apple.com) → Certificates, Identifiers & Profiles
+2. Identifiers → App IDs → 새 App ID 등록
+3. Services → Sign in with Apple 활성화
+4. Keys → Sign in with Apple 키 생성
+5. Services ID 생성 → Domains: `localhost`, Return URLs: `http://localhost:3000/api/auth/callback/apple`
+6. Client ID (Services ID), Client Secret (키에서 생성) 복사
+
+</details>
+
 ## 요구사항
 
 - Next.js 14+
