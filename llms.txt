@@ -133,11 +133,15 @@ try {
 ## 환경 변수
 
 ```env
+# Provider 설정
 KAKAO_CLIENT_ID=
 KAKAO_CLIENT_SECRET=
 NAVER_CLIENT_ID=
 NAVER_CLIENT_SECRET=
-AUTH_SECRET=  # openssl rand -base64 32
+
+# NextAuth 필수
+AUTH_SECRET=         # openssl rand -base64 32 로 생성
+AUTH_TRUST_HOST=true # 배포 환경(Vercel 등)에서 필수
 ```
 
 ## 요구사항

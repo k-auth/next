@@ -75,13 +75,25 @@ NAVER_CLIENT_SECRET=your_naver_client_secret
 
 # NextAuth 필수
 AUTH_SECRET=your_secret_key
+AUTH_TRUST_HOST=true
 ```
 
-`AUTH_SECRET`은 다음 명령어로 생성할 수 있습니다:
+### AUTH_SECRET
+
+세션 암호화에 사용되는 비밀키입니다. 다음 명령어로 생성할 수 있습니다:
 
 ```bash
 openssl rand -base64 32
 ```
+
+### AUTH_TRUST_HOST
+
+| 환경 | 값 | 설명 |
+|------|-----|------|
+| 로컬 개발 | 설정 안 해도 됨 | localhost는 자동으로 신뢰 |
+| 배포 (Vercel, Railway 등) | `true` | 프록시 뒤에서 동작 시 필수 |
+
+> 배포 환경에서 `AUTH_TRUST_HOST=true`를 설정하지 않으면 `UntrustedHost` 에러가 발생합니다.
 
 ## 2. auth.ts 생성
 
@@ -1252,6 +1264,7 @@ KOE006: Redirect URI가 등록되지 않았습니다
 
 1. **환경 변수 확인**
    - `AUTH_SECRET` 설정됨
+   - `AUTH_TRUST_HOST=true` 설정됨
    - `KAKAO_CLIENT_ID`, `KAKAO_CLIENT_SECRET` 등 설정됨
 
 2. **Redirect URI 등록**
@@ -1264,11 +1277,29 @@ KOE006: Redirect URI가 등록되지 않았습니다
 4. **HTTPS 확인**
    - 배포 환경에서는 HTTPS 필수
 
+### UntrustedHost 에러
+
+```
+[next-auth] ERROR: UntrustedHost
+```
+
+Vercel, Railway 등 프록시 뒤에서 동작하는 환경에서 발생합니다.
+
+**해결:** 환경 변수에 `AUTH_TRUST_HOST=true` 추가
+
+```env
+AUTH_TRUST_HOST=true
+```
+
 ### Vercel 배포 시 환경 변수
 
 Vercel Dashboard에서 환경 변수를 설정하세요:
 1. Project Settings → Environment Variables
-2. 필요한 변수 모두 추가
+2. 필요한 변수 모두 추가:
+   - `AUTH_SECRET`
+   - `AUTH_TRUST_HOST=true`
+   - `KAKAO_CLIENT_ID`, `KAKAO_CLIENT_SECRET`
+   - `NAVER_CLIENT_ID`, `NAVER_CLIENT_SECRET`
 
 ## 버튼 관련
 
