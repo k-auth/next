@@ -16,7 +16,7 @@ next-auth(Auth.js)를 래핑하여 한국 개발자를 위한 편의 기능을 �
 ## 설치
 
 ```bash
-npm install @relkimm/k-auth
+npm install @k-auth/next
 ```
 
 ## 빠른 시작
@@ -25,7 +25,7 @@ npm install @relkimm/k-auth
 
 ```typescript
 // auth.ts
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
@@ -50,7 +50,7 @@ export const { GET, POST } = handlers;
 ### 3. 로그인 버튼
 
 ```tsx
-import { Button } from '@relkimm/k-auth/ui';
+import { Button } from '@k-auth/next/ui';
 import { signIn } from '@/auth';
 
 <Button.Group>
@@ -99,7 +99,7 @@ export default async function Page() {
 ### Button 컴포넌트
 
 ```tsx
-import { Button } from '@relkimm/k-auth/ui';
+import { Button } from '@k-auth/next/ui';
 ```
 
 - `Button.Kakao` - 카카오 로그인 버튼
@@ -117,7 +117,7 @@ import { Button } from '@relkimm/k-auth/ui';
 ### 에러 처리
 
 ```typescript
-import { KAuthError } from '@relkimm/k-auth';
+import { KAuthError } from '@k-auth/next';
 
 try {
   // ...
@@ -147,5 +147,5 @@ AUTH_SECRET=  # openssl rand -base64 32
 
 ## 링크
 
-- GitHub: https://github.com/relkimm/k-auth
-- npm: https://www.npmjs.com/package/@relkimm/k-auth
+- GitHub: https://github.com/k-auth/next
+- npm: https://www.npmjs.com/package/@k-auth/next

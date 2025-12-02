@@ -1,8 +1,8 @@
 # K-Auth
 
-[![npm version](https://img.shields.io/npm/v/@relkimm/k-auth.svg)](https://www.npmjs.com/package/@relkimm/k-auth)
-[![npm downloads](https://img.shields.io/npm/dm/@relkimm/k-auth.svg)](https://www.npmjs.com/package/@relkimm/k-auth)
-[![license](https://img.shields.io/npm/l/@relkimm/k-auth.svg)](https://github.com/relkimm/k-auth/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/@k-auth/next.svg)](https://www.npmjs.com/package/@k-auth/next)
+[![npm downloads](https://img.shields.io/npm/dm/@k-auth/next.svg)](https://www.npmjs.com/package/@k-auth/next)
+[![license](https://img.shields.io/npm/l/@k-auth/next.svg)](https://github.com/k-auth/next/blob/main/LICENSE)
 
 Next.js에서 카카오, 네이버 로그인을 가장 쉽게 구현하는 방법.
 
@@ -16,7 +16,7 @@ Next.js에서 카카오, 네이버 로그인을 가장 쉽게 구현하는 방�
 ## 설치
 
 ```bash
-npm install @relkimm/k-auth
+npm install @k-auth/next
 ```
 
 ## 빠른 시작
@@ -25,7 +25,7 @@ npm install @relkimm/k-auth
 
 ```typescript
 // auth.ts
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
@@ -50,7 +50,7 @@ export const { GET, POST } = handlers;
 ### 3. 로그인 버튼
 
 ```tsx
-import { Button } from '@relkimm/k-auth/ui';
+import { Button } from '@k-auth/next/ui';
 import { signIn } from '@/auth';
 
 <Button.Group>
@@ -158,13 +158,13 @@ AUTH_SECRET=  # openssl rand -base64 32
 
 ## 문서
 
-자세한 사용법은 [문서 사이트](https://github.com/relkimm/k-auth)를 참고하세요.
+자세한 사용법은 [문서 사이트](https://github.com/k-auth/next)를 참고하세요.
 
-- [빠른 시작](https://github.com/relkimm/k-auth#빠른-시작)
-- [버튼 컴포넌트](https://github.com/relkimm/k-auth#버튼)
-- [Provider 설정](https://github.com/relkimm/k-auth#구글애플-추가)
-- [세션 관리](https://github.com/relkimm/k-auth#세션-확인)
-- [미들웨어](https://github.com/relkimm/k-auth#페이지-보호)
+- [빠른 시작](https://github.com/k-auth/next#빠른-시작)
+- [버튼 컴포넌트](https://github.com/k-auth/next#버튼)
+- [Provider 설정](https://github.com/k-auth/next#구글애플-추가)
+- [세션 관리](https://github.com/k-auth/next#세션-확인)
+- [미들웨어](https://github.com/k-auth/next#페이지-보호)
 
 ## 요구사항
 

@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Apple from 'next-auth/providers/apple';
-import { Kakao, Naver } from '@relkimm/k-auth/providers';
+import { Kakao, Naver } from '@k-auth/next/providers';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [

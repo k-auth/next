@@ -36,7 +36,7 @@ import { Callout } from 'nextra/components'
 프로젝트 루트에 `auth.ts` 파일을 생성합니다:
 
 ```typescript filename="auth.ts"
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
@@ -63,7 +63,7 @@ export const { GET, POST } = handlers;
 ## 4. 로그인 페이지 만들기
 
 ```tsx filename="app/login/page.tsx"
-import { Button } from '@relkimm/k-auth/ui';
+import { Button } from '@k-auth/next/ui';
 import { signIn } from '@/auth';
 
 export default function LoginPage() {

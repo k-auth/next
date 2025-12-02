@@ -1,4 +1,4 @@
-import { Button } from '@relkimm/k-auth/ui';
+import { Button } from '@k-auth/next/ui';
 
 export default function Page() {
   return (

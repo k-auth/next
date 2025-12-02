@@ -19,7 +19,7 @@ K-Auth는 이 문제들을 해결합니다.
 카카오, 네이버 OAuth provider가 내장되어 있습니다. clientId와 clientSecret만 넣으면 됩니다.
 
 ```typescript
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: { clientId: '...', clientSecret: '...' },
@@ -32,7 +32,7 @@ export const { handlers, auth, signIn, signOut } = KAuth({
 각 서비스의 [디자인 가이드라인](https://developers.kakao.com/docs/latest/ko/kakaologin/design-guide)을 준수한 버튼 컴포넌트를 제공합니다.
 
 ```tsx
-import { Button } from '@relkimm/k-auth/ui';
+import { Button } from '@k-auth/next/ui';
 
 <Button.Kakao onClick={() => signIn('kakao')} />
 <Button.Naver onClick={() => signIn('naver')} />
@@ -76,7 +76,7 @@ KAuth({
 ## 시작하기
 
 ```bash
-npm install @relkimm/k-auth
+npm install @k-auth/next
 ```
 
 [설치 가이드 →](/installation)

@@ -4,7 +4,7 @@
 
 ## 패키지 정보
 
-- **이름**: `@relkimm/k-auth`
+- **이름**: `@k-auth/next`
 - **의존성**: next-auth 5.0.0-beta.30 (v5)
 
 ## 명령어
@@ -41,13 +41,13 @@ src/
 ## Export 구조
 
 ```typescript
-// @relkimm/k-auth
+// @k-auth/next
 export { KAuth } from '@/core';
 
-// @relkimm/k-auth/providers
+// @k-auth/next/providers
 export { Kakao, Naver } from '@/providers';
 
-// @relkimm/k-auth/ui
+// @k-auth/next/ui
 export { Button, KakaoButton, NaverButton, ... } from '@/ui';
 ```
 

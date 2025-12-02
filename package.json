@@ -1,5 +1,5 @@
 {
-  "name": "@relkimm/k-auth",
+  "name": "@k-auth/next",
   "version": "0.1.0",
   "description": "한국형 소셜 로그인, 설정 10초 & 디자인 0초",
   "type": "module",
@@ -60,16 +60,16 @@
     "네이버",
     "소셜로그인"
   ],
-  "author": "relkimm",
+  "author": "k-auth",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/relkimm/k-auth.git"
+    "url": "git+https://github.com/k-auth/next.git"
   },
   "bugs": {
-    "url": "https://github.com/relkimm/k-auth/issues"
+    "url": "https://github.com/k-auth/next/issues"
   },
-  "homepage": "https://github.com/relkimm/k-auth#readme",
+  "homepage": "https://github.com/k-auth/next#readme",
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"

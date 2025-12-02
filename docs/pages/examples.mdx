@@ -3,7 +3,7 @@
 ## 기본 로그인 페이지
 
 ```tsx filename="app/login/page.tsx"
-import { Button } from '@relkimm/k-auth/ui';
+import { Button } from '@k-auth/next/ui';
 import { signIn } from '@/auth';
 
 export default function LoginPage() {
@@ -82,7 +82,7 @@ export const config = {
 ## 전체 설정 예시
 
 ```typescript filename="auth.ts"
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 import Google from 'next-auth/providers/google';
 
 export const { handlers, auth, signIn, signOut } = KAuth({

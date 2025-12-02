@@ -5,8 +5,8 @@
 K-Auth는 카카오, 네이버 로그인을 Next.js에서 가장 쉽게 구현할 수 있는 라이브러리입니다.
 next-auth(Auth.js)를 래핑하여 한국 개발자를 위한 편의 기능을 제공합니다.
 
-- GitHub: https://github.com/relkimm/k-auth
-- npm: https://www.npmjs.com/package/@relkimm/k-auth
+- GitHub: https://github.com/k-auth/next
+- npm: https://www.npmjs.com/package/@k-auth/next
 
 ---
 
@@ -23,15 +23,15 @@ next-auth(Auth.js)를 래핑하여 한국 개발자를 위한 편의 기능을 �
 # 설치
 
 ```bash
-npm install @relkimm/k-auth
+npm install @k-auth/next
 ```
 
 ```bash
-yarn add @relkimm/k-auth
+yarn add @k-auth/next
 ```
 
 ```bash
-pnpm add @relkimm/k-auth
+pnpm add @k-auth/next
 ```
 
 ## 함께 설치되는 패키지
@@ -89,7 +89,7 @@ openssl rand -base64 32
 
 ```typescript
 // auth.ts
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
@@ -118,7 +118,7 @@ export const { GET, POST } = handlers;
 
 ```tsx
 // app/login/page.tsx
-import { Button } from '@relkimm/k-auth/ui';
+import { Button } from '@k-auth/next/ui';
 import { signIn } from '@/auth';
 
 export default function LoginPage() {
@@ -254,7 +254,7 @@ K-Auth 옵션은 해당 정보를 프로필에서 가져오도록 설정합니�
 ## 전체 설정 예시
 
 ```typescript
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
@@ -431,7 +431,7 @@ KAuth({
 ## 전체 예시
 
 ```typescript
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 import Google from 'next-auth/providers/google';
 import Apple from 'next-auth/providers/apple';
 
@@ -480,7 +480,7 @@ K-Auth는 각 서비스의 공식 디자인 가이드라인을 준수한 버튼�
 ## 기본 사용법
 
 ```tsx
-import { Button } from '@relkimm/k-auth/ui';
+import { Button } from '@k-auth/next/ui';
 
 <Button.Kakao />
 <Button.Naver />
@@ -929,7 +929,7 @@ K-Auth는 next-auth를 래핑합니다. `nextAuthConfig` 옵션으로 next-auth�
 ## 기본 구조
 
 ```typescript
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: { ... },
@@ -1061,7 +1061,7 @@ KAuth({
 ## 전체 예시
 
 ```typescript
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 import Google from 'next-auth/providers/google';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/lib/prisma';
@@ -1144,7 +1144,7 @@ K-Auth는 한국어로 된 친절한 에러 메시지를 제공합니다.
 ## 프로그래밍 방식 처리
 
 ```typescript
-import { KAuthError } from '@relkimm/k-auth';
+import { KAuthError } from '@k-auth/next';
 
 try {
   // ...
@@ -1418,7 +1418,7 @@ next-auth가 지원하는 모든 adapter를 사용할 수 있습니다:
 
 ```tsx
 // app/login/page.tsx
-import { Button } from '@relkimm/k-auth/ui';
+import { Button } from '@k-auth/next/ui';
 import { signIn } from '@/auth';
 
 export default function LoginPage() {
@@ -1500,7 +1500,7 @@ export const config = {
 
 ```typescript
 // auth.ts
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 import Google from 'next-auth/providers/google';
 
 export const { handlers, auth, signIn, signOut } = KAuth({

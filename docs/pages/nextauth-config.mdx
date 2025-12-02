@@ -5,7 +5,7 @@ K-Auth는 next-auth를 래핑합니다. `nextAuthConfig` 옵션으로 next-auth�
 ## 기본 구조
 
 ```typescript
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: { ... },
@@ -141,7 +141,7 @@ KAuth({
 ## 전체 예시
 
 ```typescript
-import { KAuth } from '@relkimm/k-auth';
+import { KAuth } from '@k-auth/next';
 import Google from 'next-auth/providers/google';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/lib/prisma';
