@@ -1,75 +1,46 @@
-import { auth, signOut } from '@/auth';
-import { LoginButtons } from './LoginButtons';
+import { Button } from '@relkimm/k-auth/ui';
 
-export default async function Page() {
-  const session = await auth();
-
+export default function Page() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <div className="w-full max-w-sm space-y-8">
+    <main className="min-h-screen bg-white">
+      <div className="mx-auto max-w-lg px-6 py-20">
         {/* Header */}
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-neutral-900">K-Auth</h1>
-          <p className="mt-2 text-sm text-neutral-500">
-            한국형 소셜 로그인 라이브러리
-          </p>
+        <div className="mb-16">
+          <h1 className="text-2xl font-semibold tracking-tight">K-Auth</h1>
+          <p className="mt-2 text-neutral-500">한국형 소셜 로그인 버튼</p>
         </div>
 
-        {session?.user ? (
-          <>
-            {/* Profile */}
-            <div className="text-center">
-              {session.user.image ? (
-                <img
-                  src={session.user.image}
-                  alt=""
-                  className="mx-auto h-20 w-20 rounded-full"
-                />
-              ) : (
-                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-neutral-100">
-                  <span className="text-2xl font-medium text-neutral-400">
-                    {session.user.name?.charAt(0) || '?'}
-                  </span>
-                </div>
-              )}
-              <p className="mt-4 text-lg font-medium text-neutral-900">
-                {session.user.name || '사용자'}
-              </p>
-              {session.user.email && (
-                <p className="mt-1 text-sm text-neutral-500">{session.user.email}</p>
-              )}
-            </div>
+        {/* Buttons */}
+        <section className="mb-16">
+          <Button.Group>
+            <Button.Kakao />
+            <Button.Naver />
+            <Button.Google />
+            <Button.Apple />
+          </Button.Group>
+        </section>
 
-            {/* Logout */}
-            <form
-              action={async () => {
-                'use server';
-                await signOut({ redirectTo: '/' });
-              }}
-            >
-              <button
-                type="submit"
-                className="w-full rounded-lg bg-neutral-900 py-3 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
-              >
-                로그아웃
-              </button>
-            </form>
-          </>
-        ) : (
-          <LoginButtons />
-        )}
+        {/* Code */}
+        <section>
+          <h2 className="mb-4 text-sm font-medium text-neutral-400">Usage</h2>
+          <pre className="overflow-x-auto rounded-lg bg-neutral-950 p-5 text-sm leading-relaxed text-neutral-300">
+{`import { Button } from '@relkimm/k-auth/ui';
+import { signIn } from 'next-auth/react';
+
+<Button.Kakao onClick={() => signIn('kakao')} />
+<Button.Naver onClick={() => signIn('naver')} />`}
+          </pre>
+        </section>
 
         {/* Footer */}
-        <p className="text-center text-xs text-neutral-400">
+        <footer className="mt-20 text-sm text-neutral-400">
           <a
             href="https://github.com/relkimm/k-auth"
-            target="_blank"
-            rel="noopener noreferrer"
             className="hover:text-neutral-600"
           >
-            @relkimm/k-auth
+            GitHub →
           </a>
-        </p>
+        </footer>
       </div>
     </main>
   );
