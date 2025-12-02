@@ -1,0 +1,82 @@
+# K-Auth
+
+Next.js에서 카카오, 네이버 로그인을 가장 쉽게 구현하는 방법.
+
+## 왜 K-Auth인가요?
+
+next-auth(Auth.js)는 훌륭한 인증 라이브러리입니다. 하지만 한국 서비스를 만들 때 몇 가지 불편함이 있습니다:
+
+- **카카오/네이버 공식 provider가 없습니다** - 매번 커스텀 provider를 만들어야 합니다
+- **버튼 디자인을 직접 구현해야 합니다** - 각 서비스의 가이드라인을 찾아 색상, 아이콘, 크기를 맞춰야 합니다
+- **영어 에러 메시지** - 문제가 생겼을 때 원인 파악이 어렵습니다
+
+K-Auth는 이 문제들을 해결합니다.
+
+## 핵심 기능
+
+### 내장 Provider
+
+카카오, 네이버 OAuth provider가 내장되어 있습니다. clientId와 clientSecret만 넣으면 됩니다.
+
+```typescript
+import { KAuth } from '@relkimm/k-auth';
+
+export const { handlers, auth, signIn, signOut } = KAuth({
+  kakao: { clientId: '...', clientSecret: '...' },
+  naver: { clientId: '...', clientSecret: '...' },
+});
+```
+
+### 공식 디자인 버튼
+
+각 서비스의 [디자인 가이드라인](https://developers.kakao.com/docs/latest/ko/kakaologin/design-guide)을 준수한 버튼 컴포넌트를 제공합니다.
+
+```tsx
+import { Button } from '@relkimm/k-auth/ui';
+
+<Button.Kakao onClick={() => signIn('kakao')} />
+<Button.Naver onClick={() => signIn('naver')} />
+```
+
+### 직관적인 옵션
+
+전화번호, 생년월일 같은 추가 정보가 필요할 때 scope를 직접 찾을 필요 없습니다.
+
+```typescript
+KAuth({
+  kakao: {
+    clientId: '...',
+    clientSecret: '...',
+    collectPhone: true,  // 이게 끝
+  },
+});
+```
+
+### next-auth 호환
+
+next-auth의 모든 기능을 그대로 사용할 수 있습니다. 구글, 애플 등 다른 provider도 함께 쓸 수 있습니다.
+
+```typescript
+import Google from 'next-auth/providers/google';
+
+KAuth({
+  kakao: { ... },
+  nextAuthConfig: {
+    providers: [Google({ ... })],
+    callbacks: { ... },
+  },
+});
+```
+
+## 요구사항
+
+- Next.js 14 이상
+- React 18 이상
+
+## 시작하기
+
+```bash
+npm install @relkimm/k-auth
+```
+
+[설치 가이드 →](/installation)

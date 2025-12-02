@@ -6,10 +6,12 @@
 
 Next.js에서 카카오, 네이버 로그인을 가장 쉽게 구현하는 방법.
 
-next-auth 기반이지만 한국 서비스에 맞게 최적화했습니다.
-- 카카오/네이버 provider 내장
-- 공식 가이드라인 준수 버튼 컴포넌트
-- 한국어 에러 메시지
+## 특징
+
+- **카카오/네이버 provider 내장** - 복잡한 OAuth 설정 없이 바로 사용
+- **공식 디자인 버튼** - 각 서비스 가이드라인 준수
+- **한국어 에러 메시지** - 문제 원인과 해결 방법을 바로 확인
+- **next-auth 호환** - 구글, 애플, GitHub 등 함께 사용 가능
 
 ## 설치
 
@@ -17,11 +19,12 @@ next-auth 기반이지만 한국 서비스에 맞게 최적화했습니다.
 npm install @relkimm/k-auth
 ```
 
-## 사용법
+## 빠른 시작
 
-**1. 설정 (auth.ts)**
+### 1. 설정
 
 ```typescript
+// auth.ts
 import { KAuth } from '@relkimm/k-auth';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
@@ -36,14 +39,15 @@ export const { handlers, auth, signIn, signOut } = KAuth({
 });
 ```
 
-**2. API 라우트 (app/api/auth/[...nextauth]/route.ts)**
+### 2. API 라우트
 
 ```typescript
+// app/api/auth/[...nextauth]/route.ts
 import { handlers } from '@/auth';
 export const { GET, POST } = handlers;
 ```
 
-**3. 로그인 버튼**
+### 3. 로그인 버튼
 
 ```tsx
 import { Button } from '@relkimm/k-auth/ui';
@@ -55,12 +59,27 @@ import { signIn } from '@/auth';
 </Button.Group>
 ```
 
-끝.
+### 4. 세션 확인
+
+```tsx
+// app/page.tsx
+import { auth } from '@/auth';
+
+export default async function Page() {
+  const session = await auth();
+
+  if (!session) {
+    return <a href="/login">로그인</a>;
+  }
+
+  return <p>안녕하세요, {session.user?.name}님!</p>;
+}
+```
 
 ## 버튼
 
 ```tsx
-// 개별 사용
+// 지원 버튼
 <Button.Kakao />
 <Button.Naver />
 <Button.Google />
@@ -76,30 +95,23 @@ import { signIn } from '@/auth';
   <Button.Kakao size="icon" />
   <Button.Naver size="icon" />
 </Button.Group>
-
-// 커스텀
-<Button.Kakao className="w-full rounded-xl" />
 ```
 
 ## 추가 정보 수집
-
-전화번호, 생년월일 등이 필요하면 옵션만 추가하세요. scope는 알아서 설정됩니다.
 
 ```typescript
 KAuth({
   kakao: {
     clientId: '...',
     clientSecret: '...',
-    collectPhone: true,
-    collectBirth: true,
-    collectGender: true,
+    collectPhone: true,  // 전화번호
+    collectBirth: true,  // 생년월일
+    collectGender: true, // 성별
   },
 });
 ```
 
 ## 구글/애플 추가
-
-next-auth provider 그대로 사용할 수 있습니다.
 
 ```typescript
 import Google from 'next-auth/providers/google';
@@ -117,6 +129,23 @@ KAuth({
 });
 ```
 
+## 페이지 보호
+
+```typescript
+// middleware.ts
+import { auth } from '@/auth';
+
+export default auth((req) => {
+  if (!req.auth && req.nextUrl.pathname !== '/login') {
+    return Response.redirect(new URL('/login', req.nextUrl));
+  }
+});
+
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+};
+```
+
 ## 환경 변수
 
 ```env
@@ -127,51 +156,15 @@ NAVER_CLIENT_SECRET=
 AUTH_SECRET=  # openssl rand -base64 32
 ```
 
-## 콘솔 설정
+## 문서
 
-<details>
-<summary>카카오</summary>
+자세한 사용법은 [문서 사이트](https://github.com/relkimm/k-auth)를 참고하세요.
 
-1. [Kakao Developers](https://developers.kakao.com) → 애플리케이션 추가
-2. 앱 키 → REST API 키 복사
-3. 보안 → Client Secret 생성
-4. 카카오 로그인 활성화
-5. Redirect URI: `http://localhost:3000/api/auth/callback/kakao`
-
-</details>
-
-<details>
-<summary>네이버</summary>
-
-1. [NAVER Developers](https://developers.naver.com) → 애플리케이션 등록
-2. Client ID, Secret 복사
-3. 서비스 URL: `http://localhost:3000`
-4. Callback URL: `http://localhost:3000/api/auth/callback/naver`
-
-</details>
-
-<details>
-<summary>구글</summary>
-
-1. [Google Cloud Console](https://console.cloud.google.com) → 프로젝트 생성
-2. API 및 서비스 → 사용자 인증 정보 → OAuth 2.0 클라이언트 ID 만들기
-3. 애플리케이션 유형: 웹 애플리케이션
-4. 승인된 리디렉션 URI: `http://localhost:3000/api/auth/callback/google`
-5. Client ID, Secret 복사
-
-</details>
-
-<details>
-<summary>애플</summary>
-
-1. [Apple Developer](https://developer.apple.com) → Certificates, Identifiers & Profiles
-2. Identifiers → App IDs → 새 App ID 등록
-3. Services → Sign in with Apple 활성화
-4. Keys → Sign in with Apple 키 생성
-5. Services ID 생성 → Domains: `localhost`, Return URLs: `http://localhost:3000/api/auth/callback/apple`
-6. Client ID (Services ID), Client Secret (키에서 생성) 복사
-
-</details>
+- [빠른 시작](https://github.com/relkimm/k-auth#빠른-시작)
+- [버튼 컴포넌트](https://github.com/relkimm/k-auth#버튼)
+- [Provider 설정](https://github.com/relkimm/k-auth#구글애플-추가)
+- [세션 관리](https://github.com/relkimm/k-auth#세션-확인)
+- [미들웨어](https://github.com/relkimm/k-auth#페이지-보호)
 
 ## 요구사항
 

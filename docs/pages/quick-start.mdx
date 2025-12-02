@@ -1,0 +1,120 @@
+# 빠른 시작
+
+5분 안에 카카오/네이버 로그인을 구현합니다.
+
+## 1. 환경 변수 설정
+
+프로젝트 루트에 `.env.local` 파일을 생성합니다:
+
+```env filename=".env.local"
+# 카카오
+KAKAO_CLIENT_ID=your_kakao_rest_api_key
+KAKAO_CLIENT_SECRET=your_kakao_client_secret
+
+# 네이버
+NAVER_CLIENT_ID=your_naver_client_id
+NAVER_CLIENT_SECRET=your_naver_client_secret
+
+# NextAuth 필수
+AUTH_SECRET=your_secret_key
+```
+
+`AUTH_SECRET`은 다음 명령어로 생성할 수 있습니다:
+
+```bash
+openssl rand -base64 32
+```
+
+import { Callout } from 'nextra/components'
+
+<Callout type="info">
+아직 카카오/네이버 앱을 만들지 않았다면 [콘솔 설정](/console-setup) 가이드를 먼저 확인하세요.
+</Callout>
+
+## 2. auth.ts 생성
+
+프로젝트 루트에 `auth.ts` 파일을 생성합니다:
+
+```typescript filename="auth.ts"
+import { KAuth } from '@relkimm/k-auth';
+
+export const { handlers, auth, signIn, signOut } = KAuth({
+  kakao: {
+    clientId: process.env.KAKAO_CLIENT_ID!,
+    clientSecret: process.env.KAKAO_CLIENT_SECRET!,
+  },
+  naver: {
+    clientId: process.env.NAVER_CLIENT_ID!,
+    clientSecret: process.env.NAVER_CLIENT_SECRET!,
+  },
+});
+```
+
+## 3. API 라우트 설정
+
+`app/api/auth/[...nextauth]/route.ts` 파일을 생성합니다:
+
+```typescript filename="app/api/auth/[...nextauth]/route.ts"
+import { handlers } from '@/auth';
+
+export const { GET, POST } = handlers;
+```
+
+## 4. 로그인 페이지 만들기
+
+```tsx filename="app/login/page.tsx"
+import { Button } from '@relkimm/k-auth/ui';
+import { signIn } from '@/auth';
+
+export default function LoginPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-full max-w-sm space-y-4">
+        <h1 className="text-2xl font-bold text-center">로그인</h1>
+
+        <Button.Group>
+          <Button.Kakao onClick={() => signIn('kakao')} />
+          <Button.Naver onClick={() => signIn('naver')} />
+        </Button.Group>
+      </div>
+    </div>
+  );
+}
+```
+
+## 5. 세션 확인
+
+로그인 후 세션을 확인하려면:
+
+```tsx filename="app/page.tsx"
+import { auth } from '@/auth';
+
+export default async function Home() {
+  const session = await auth();
+
+  if (!session) {
+    return <a href="/login">로그인하세요</a>;
+  }
+
+  return (
+    <div>
+      <p>안녕하세요, {session.user?.name}님!</p>
+      <img src={session.user?.image} alt="프로필" />
+    </div>
+  );
+}
+```
+
+## 6. 개발 서버 실행
+
+```bash
+npm run dev
+```
+
+http://localhost:3000/login 에 접속하면 로그인 버튼이 보입니다.
+
+## 다음 단계
+
+- [콘솔 설정](/console-setup) - 카카오/네이버 개발자 콘솔 설정
+- [버튼 컴포넌트](/buttons) - 버튼 커스터마이징
+- [옵션](/options) - 전화번호, 생년월일 등 추가 정보 수집

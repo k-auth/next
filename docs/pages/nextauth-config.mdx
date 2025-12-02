@@ -1,0 +1,178 @@
+# NextAuth 설정
+
+K-Auth는 next-auth를 래핑합니다. `nextAuthConfig` 옵션으로 next-auth의 모든 기능을 사용할 수 있습니다.
+
+## 기본 구조
+
+```typescript
+import { KAuth } from '@relkimm/k-auth';
+
+export const { handlers, auth, signIn, signOut } = KAuth({
+  kakao: { ... },
+  naver: { ... },
+  nextAuthConfig: {
+    // next-auth 설정
+  },
+});
+```
+
+## 다른 Provider 추가
+
+구글, 애플 등 next-auth 공식 provider를 함께 사용할 수 있습니다.
+
+```typescript
+import Google from 'next-auth/providers/google';
+import Apple from 'next-auth/providers/apple';
+import GitHub from 'next-auth/providers/github';
+
+KAuth({
+  kakao: { ... },
+  naver: { ... },
+  nextAuthConfig: {
+    providers: [
+      Google({
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      }),
+      Apple({
+        clientId: process.env.APPLE_CLIENT_ID!,
+        clientSecret: process.env.APPLE_CLIENT_SECRET!,
+      }),
+      GitHub({
+        clientId: process.env.GITHUB_CLIENT_ID!,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      }),
+    ],
+  },
+});
+```
+
+## Callbacks
+
+세션, JWT 등을 커스터마이징할 수 있습니다.
+
+```typescript
+KAuth({
+  kakao: { ... },
+  nextAuthConfig: {
+    callbacks: {
+      // JWT 토큰에 추가 정보 저장
+      jwt({ token, user, account }) {
+        if (account) {
+          token.provider = account.provider;
+        }
+        return token;
+      },
+
+      // 세션에 추가 정보 포함
+      session({ session, token }) {
+        if (token.sub) {
+          session.user.id = token.sub;
+        }
+        return session;
+      },
+
+      // 로그인 허용 여부 결정
+      signIn({ user, account }) {
+        // 특정 조건에서만 로그인 허용
+        return true;
+      },
+    },
+  },
+});
+```
+
+## 커스텀 페이지
+
+```typescript
+KAuth({
+  kakao: { ... },
+  nextAuthConfig: {
+    pages: {
+      signIn: '/login',        // 로그인 페이지
+      signOut: '/logout',      // 로그아웃 페이지
+      error: '/auth/error',    // 에러 페이지
+      newUser: '/welcome',     // 신규 가입 시 리다이렉트
+    },
+  },
+});
+```
+
+## 데이터베이스 연동
+
+Prisma, Drizzle 등의 adapter를 사용할 수 있습니다.
+
+```typescript
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { prisma } from '@/lib/prisma';
+
+KAuth({
+  kakao: { ... },
+  nextAuthConfig: {
+    adapter: PrismaAdapter(prisma),
+  },
+});
+```
+
+import { Callout } from 'nextra/components'
+
+<Callout type="info">
+Adapter 설정에 대한 자세한 내용은 [Auth.js Adapters 문서](https://authjs.dev/getting-started/adapters)를 참고하세요.
+</Callout>
+
+## 이벤트
+
+```typescript
+KAuth({
+  kakao: { ... },
+  nextAuthConfig: {
+    events: {
+      signIn({ user, account }) {
+        console.log(`${user.name}님이 ${account?.provider}로 로그인했습니다.`);
+      },
+      signOut({ token }) {
+        console.log('로그아웃');
+      },
+    },
+  },
+});
+```
+
+## 전체 예시
+
+```typescript
+import { KAuth } from '@relkimm/k-auth';
+import Google from 'next-auth/providers/google';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { prisma } from '@/lib/prisma';
+
+export const { handlers, auth, signIn, signOut } = KAuth({
+  kakao: {
+    clientId: process.env.KAKAO_CLIENT_ID!,
+    clientSecret: process.env.KAKAO_CLIENT_SECRET!,
+    collectPhone: true,
+  },
+  naver: {
+    clientId: process.env.NAVER_CLIENT_ID!,
+    clientSecret: process.env.NAVER_CLIENT_SECRET!,
+  },
+  nextAuthConfig: {
+    adapter: PrismaAdapter(prisma),
+    providers: [
+      Google({
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      }),
+    ],
+    callbacks: {
+      session({ session, token }) {
+        session.user.id = token.sub!;
+        return session;
+      },
+    },
+    pages: {
+      signIn: '/login',
+    },
+  },
+});
+```

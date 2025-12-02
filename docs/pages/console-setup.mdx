@@ -1,0 +1,170 @@
+# 콘솔 설정
+
+각 서비스의 개발자 콘솔에서 앱을 생성하고 인증 정보를 발급받습니다.
+
+import { Tabs } from 'nextra/components'
+
+<Tabs items={['카카오', '네이버', '구글', '애플']}>
+  <Tabs.Tab>
+    ## 카카오 설정
+
+    ### 1. 애플리케이션 생성
+
+    1. [Kakao Developers](https://developers.kakao.com) 접속
+    2. **내 애플리케이션** → **애플리케이션 추가하기**
+    3. 앱 이름, 회사명 입력 후 저장
+
+    ### 2. 앱 키 확인
+
+    1. **앱 키** 메뉴로 이동
+    2. **REST API 키** 복사 → `KAKAO_CLIENT_ID`
+
+    ### 3. Client Secret 생성
+
+    1. **보안** 메뉴로 이동
+    2. **코드 생성** 클릭
+    3. 생성된 코드 복사 → `KAKAO_CLIENT_SECRET`
+    4. **활성화 상태**를 `사용함`으로 변경
+
+    ### 4. 카카오 로그인 활성화
+
+    1. **카카오 로그인** 메뉴로 이동
+    2. **활성화 설정**을 `ON`으로 변경
+
+    ### 5. Redirect URI 등록
+
+    1. **카카오 로그인** → **Redirect URI**
+    2. URI 등록:
+       - 개발: `http://localhost:3000/api/auth/callback/kakao`
+       - 배포: `https://yourdomain.com/api/auth/callback/kakao`
+
+    ### 6. 동의 항목 설정 (선택)
+
+    전화번호, 생년월일 등을 수집하려면:
+
+    1. **동의항목** 메뉴로 이동
+    2. 필요한 항목의 **설정** 클릭
+    3. **동의 단계**를 `필수 동의` 또는 `선택 동의`로 설정
+
+    그 후 K-Auth 옵션에서 `collectPhone: true` 등을 추가합니다.
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ## 네이버 설정
+
+    ### 1. 애플리케이션 등록
+
+    1. [NAVER Developers](https://developers.naver.com) 접속
+    2. **Application** → **애플리케이션 등록**
+    3. 애플리케이션 이름 입력
+    4. **사용 API**에서 `네이버 로그인` 선택
+
+    ### 2. 필수 정보 설정
+
+    1. **제공 정보 선택**에서 필요한 항목 체크
+       - 기본: 이름, 이메일, 프로필 사진
+       - 추가: 휴대전화, 생년월일, 성별 등
+
+    ### 3. 환경 설정
+
+    1. **환경 추가**에서 `PC 웹` 선택
+    2. **서비스 URL**: `http://localhost:3000`
+    3. **Callback URL**: `http://localhost:3000/api/auth/callback/naver`
+
+    ### 4. 인증 정보 확인
+
+    1. **애플리케이션 정보**에서:
+       - **Client ID** 복사 → `NAVER_CLIENT_ID`
+       - **Client Secret** 복사 → `NAVER_CLIENT_SECRET`
+
+    ### 배포 시 주의사항
+
+    네이버는 서비스 URL과 Callback URL 검증이 엄격합니다.
+    배포 시 실제 도메인으로 변경해야 합니다.
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ## 구글 설정
+
+    ### 1. 프로젝트 생성
+
+    1. [Google Cloud Console](https://console.cloud.google.com) 접속
+    2. 새 프로젝트 생성
+
+    ### 2. OAuth 동의 화면 설정
+
+    1. **API 및 서비스** → **OAuth 동의 화면**
+    2. **User Type**: `외부` 선택
+    3. 앱 정보 입력 후 저장
+
+    ### 3. 사용자 인증 정보 생성
+
+    1. **사용자 인증 정보** → **사용자 인증 정보 만들기**
+    2. **OAuth 클라이언트 ID** 선택
+    3. **애플리케이션 유형**: `웹 애플리케이션`
+    4. **승인된 리디렉션 URI** 추가:
+       - `http://localhost:3000/api/auth/callback/google`
+    5. **만들기** 클릭
+    6. **클라이언트 ID**와 **클라이언트 보안 비밀번호** 복사
+
+    ### 4. K-Auth 설정
+
+    구글은 next-auth provider를 사용합니다:
+
+    ```typescript
+    import Google from 'next-auth/providers/google';
+
+    KAuth({
+      kakao: { ... },
+      nextAuthConfig: {
+        providers: [
+          Google({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+          }),
+        ],
+      },
+    });
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ## 애플 설정
+
+    import { Callout } from 'nextra/components'
+
+    <Callout type="warning">
+      애플 로그인은 HTTPS가 필수입니다. localhost에서는 테스트가 어렵습니다.
+    </Callout>
+
+    ### 1. App ID 생성
+
+    1. [Apple Developer](https://developer.apple.com) 접속
+    2. **Certificates, Identifiers & Profiles**
+    3. **Identifiers** → **+** 버튼
+    4. **App IDs** 선택 후 등록
+    5. **Sign in with Apple** 활성화
+
+    ### 2. Services ID 생성
+
+    1. **Identifiers** → **+** 버튼
+    2. **Services IDs** 선택
+    3. Identifier 입력 (예: `com.yourdomain.app.client`)
+    4. **Sign in with Apple** 활성화
+    5. **Configure** 클릭:
+       - **Domains**: `yourdomain.com`
+       - **Return URLs**: `https://yourdomain.com/api/auth/callback/apple`
+
+    ### 3. Key 생성
+
+    1. **Keys** → **+** 버튼
+    2. **Sign in with Apple** 체크
+    3. **Configure** → App ID 선택
+    4. 키 다운로드 (.p8 파일)
+
+    ### 4. Client Secret 생성
+
+    애플은 JWT 형태의 Client Secret이 필요합니다.
+    자세한 내용은 [Auth.js Apple 문서](https://authjs.dev/getting-started/providers/apple)를 참고하세요.
+  </Tabs.Tab>
+</Tabs>

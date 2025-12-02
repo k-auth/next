@@ -1,0 +1,99 @@
+# FAQ
+
+자주 묻는 질문들입니다.
+
+## 일반
+
+### K-Auth와 next-auth의 차이점은?
+
+K-Auth는 next-auth를 래핑한 라이브러리입니다. next-auth의 모든 기능을 사용하면서 카카오/네이버 로그인을 더 쉽게 구현할 수 있습니다.
+
+| 기능 | next-auth | K-Auth |
+|------|-----------|--------|
+| 카카오/네이버 provider | 직접 구현 필요 | 내장 |
+| 로그인 버튼 | 직접 구현 필요 | 제공 |
+| 에러 메시지 | 영어 | 한국어 |
+| scope 설정 | 직접 입력 | `collectPhone: true` |
+
+### next-auth를 따로 설치해야 하나요?
+
+아니요. K-Auth를 설치하면 next-auth가 자동으로 함께 설치됩니다.
+
+### 구글, GitHub 등 다른 로그인도 쓸 수 있나요?
+
+네. `nextAuthConfig`에 next-auth provider를 추가하면 됩니다.
+
+```typescript
+import Google from 'next-auth/providers/google';
+
+KAuth({
+  kakao: { ... },
+  nextAuthConfig: {
+    providers: [Google({ ... })],
+  },
+});
+```
+
+### TypeScript를 꼭 써야 하나요?
+
+아니요. JavaScript에서도 사용할 수 있습니다. 다만 TypeScript를 사용하면 자동완성과 타입 체크의 도움을 받을 수 있습니다.
+
+## 버튼
+
+### Tailwind CSS가 필요한가요?
+
+기본 버튼 스타일은 Tailwind 없이도 동작합니다. `className` prop으로 커스텀하려면 Tailwind가 필요합니다.
+
+### 버튼 색상을 바꿀 수 있나요?
+
+각 서비스의 디자인 가이드라인을 준수하기 위해 기본 색상 변경은 지원하지 않습니다. `className`으로 크기, 모서리, 그림자 등은 조절할 수 있습니다.
+
+### 버튼 텍스트를 변경할 수 있나요?
+
+현재는 지원하지 않습니다. 각 서비스 가이드라인에서 권장하는 텍스트를 사용합니다.
+
+## 에러
+
+### "Redirect URI가 등록되지 않았습니다" 에러
+
+개발자 콘솔에서 Redirect URI를 등록해야 합니다:
+- 카카오: `http://localhost:3000/api/auth/callback/kakao`
+- 네이버: `http://localhost:3000/api/auth/callback/naver`
+
+### "동의 항목이 비활성화되어 있습니다" 에러
+
+`collectPhone: true` 등의 옵션을 사용하려면 개발자 콘솔에서 해당 동의 항목을 먼저 활성화해야 합니다.
+
+### 배포 후 로그인이 안 됩니다
+
+1. `AUTH_SECRET` 환경 변수가 설정되어 있는지 확인
+2. 개발자 콘솔에서 배포 도메인의 Redirect URI 등록 확인
+3. 네이버: 서비스 URL도 배포 도메인으로 변경 필요
+
+## 데이터베이스
+
+### 세션을 데이터베이스에 저장할 수 있나요?
+
+네. next-auth adapter를 사용하면 됩니다.
+
+```typescript
+import { PrismaAdapter } from '@auth/prisma-adapter';
+
+KAuth({
+  kakao: { ... },
+  nextAuthConfig: {
+    adapter: PrismaAdapter(prisma),
+  },
+});
+```
+
+### 어떤 데이터베이스를 지원하나요?
+
+next-auth가 지원하는 모든 adapter를 사용할 수 있습니다:
+- Prisma
+- Drizzle
+- MongoDB
+- Supabase
+- 등 25개 이상
+
+[Auth.js Adapters 문서](https://authjs.dev/getting-started/adapters) 참고

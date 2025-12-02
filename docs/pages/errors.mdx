@@ -1,0 +1,58 @@
+# 에러 처리
+
+K-Auth는 한국어로 된 친절한 에러 메시지를 제공합니다.
+
+## 에러 형식
+
+```
+==================================================
+[K-Auth 오류] KAKAO_PHONE_NOT_ENABLED
+==================================================
+
+메시지: 전화번호 동의 항목이 비활성화되어 있습니다.
+힌트: 카카오 개발자센터 > 동의항목 > 전화번호를 활성화해주세요.
+문서: https://developers.kakao.com/console
+
+==================================================
+```
+
+## 주요 에러 코드
+
+### 설정 에러
+
+| 코드 | 설명 |
+|------|------|
+| `MISSING_CLIENT_ID` | clientId가 누락됨 |
+| `MISSING_CLIENT_SECRET` | clientSecret이 누락됨 |
+| `NO_PROVIDER_CONFIGURED` | provider가 하나도 설정되지 않음 |
+
+### 카카오 에러
+
+| 코드 | 설명 |
+|------|------|
+| `KAKAO_PHONE_NOT_ENABLED` | 전화번호 동의 항목 비활성화 |
+| `KAKAO_INVALID_REDIRECT_URI` | Redirect URI 불일치 |
+
+### 네이버 에러
+
+| 코드 | 설명 |
+|------|------|
+| `NAVER_PHONE_NOT_ENABLED` | 전화번호 동의 항목 비활성화 |
+| `NAVER_INVALID_CALLBACK_URL` | Callback URL 불일치 |
+
+## 프로그래밍 방식 처리
+
+```typescript
+import { KAuthError } from '@relkimm/k-auth';
+
+try {
+  // ...
+} catch (error) {
+  if (error instanceof KAuthError) {
+    console.log(error.code);    // 'KAKAO_PHONE_NOT_ENABLED'
+    console.log(error.message); // '전화번호 동의 항목이...'
+    console.log(error.hint);    // '카카오 개발자센터 > ...'
+    console.log(error.docs);    // 'https://...'
+  }
+}
+```
