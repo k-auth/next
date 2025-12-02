@@ -1,6 +1,6 @@
 {
   "name": "@k-auth/next",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "한국형 소셜 로그인, 설정 10초 & 디자인 0초",
   "type": "module",
   "main": "./dist/index.cjs",

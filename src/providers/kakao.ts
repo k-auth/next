@@ -127,6 +127,10 @@ export function Kakao(options: KakaoOptions): OAuthConfig<KakaoProfile> {
     },
     token: 'https://kauth.kakao.com/oauth/token',
     userinfo: 'https://kapi.kakao.com/v2/user/me',
+    // 카카오는 client_id/secret을 body로 전달해야 함 (client_secret_post)
+    client: {
+      token_endpoint_auth_method: 'client_secret_post',
+    },
     profile(profile) {
       return {
         id: String(profile.id),
