@@ -1,17 +1,17 @@
 # K-Auth
 
-> 한국형 소셜 로그인 라이브러리 for Next.js
+> 한국형 소셜 로그인 라이브러리 for Next.js (v0.2.0)
 
-K-Auth는 카카오, 네이버 로그인을 Next.js에서 가장 쉽게 구현할 수 있는 라이브러리입니다.
-next-auth(Auth.js)를 래핑하여 한국 개발자를 위한 편의 기능을 제공합니다.
+K-Auth는 카카오, 네이버, 구글, 애플 로그인을 Next.js에서 가장 쉽게 구현할 수 있는 라이브러리입니다.
+next-auth(Auth.js) v5를 래핑하여 한국 개발자를 위한 편의 기능을 제공합니다.
 
 ## 주요 기능
 
-- 카카오/네이버 OAuth provider 내장 (next-auth 공식 미지원)
+- 카카오/네이버/구글/애플 OAuth Provider 내장
 - 공식 디자인 가이드를 준수한 로그인 버튼 컴포넌트
 - 한국어 에러 메시지
-- `collectPhone: true` 같은 직관적인 옵션으로 scope 자동 설정
-- next-auth 완벽 호환 (구글, 애플, GitHub 등 함께 사용 가능)
+- `collect: { phone: true }` 같은 직관적인 옵션으로 scope 자동 설정
+- next-auth 완벽 호환 (GitHub, Discord 등 함께 사용 가능)
 
 ## 설치
 
@@ -31,6 +31,7 @@ export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
     clientId: process.env.KAKAO_CLIENT_ID!,
     clientSecret: process.env.KAKAO_CLIENT_SECRET!,
+    collect: { email: true, profile: true },
   },
   naver: {
     clientId: process.env.NAVER_CLIENT_ID!,
@@ -80,18 +81,31 @@ export default async function Page() {
 **카카오 옵션:**
 - `kakao.clientId` - 카카오 REST API 키 (필수)
 - `kakao.clientSecret` - 카카오 Client Secret (필수)
-- `kakao.collectPhone` - 전화번호 수집 (scope 자동 추가)
-- `kakao.collectBirth` - 생년월일 수집
-- `kakao.collectGender` - 성별 수집
-- `kakao.collectAgeRange` - 연령대 수집
+- `kakao.collect.email` - 이메일 수집
+- `kakao.collect.profile` - 프로필(닉네임, 이미지) 수집
+- `kakao.collect.phone` - 전화번호 수집
+- `kakao.collect.birthday` - 생년월일 수집
+- `kakao.collect.gender` - 성별 수집
+- `kakao.collect.ageRange` - 연령대 수집
+- `kakao.collect.ci` - CI(연계정보) 수집 (카카오싱크 비즈니스 전용)
 
 **네이버 옵션:**
 - `naver.clientId` - 네이버 Client ID (필수)
 - `naver.clientSecret` - 네이버 Client Secret (필수)
-- `naver.collectPhone` - 전화번호 수집
-- `naver.collectBirth` - 생년월일 수집
-- `naver.collectGender` - 성별 수집
-- `naver.collectName` - 실명 수집
+- `naver.collect.*` - 문서화 목적 (네이버는 scope 미지원, 개발자센터에서 직접 설정)
+
+**구글 옵션:**
+- `google.clientId` - 구글 Client ID (필수)
+- `google.clientSecret` - 구글 Client Secret (필수)
+- `google.collect.email` - 이메일 수집
+- `google.collect.profile` - 프로필 수집
+- `google.forceConsent` - 매번 동의 화면 표시 (refresh_token 획득용)
+
+**애플 옵션:**
+- `apple.clientId` - 애플 Services ID (필수)
+- `apple.clientSecret` - 애플 Client Secret JWT (필수)
+- `apple.collect.email` - 이메일 수집
+- `apple.collect.name` - 이름 수집 (최초 로그인 시에만 제공)
 
 **next-auth 설정:**
 - `nextAuthConfig` - next-auth 고급 설정 (providers, callbacks, adapter 등)
@@ -114,22 +128,6 @@ import { Button } from '@k-auth/next/ui';
 - `size="lg"` - 큰 버튼
 - `size="icon"` - 아이콘만
 
-### 에러 처리
-
-```typescript
-import { KAuthError } from '@k-auth/next';
-
-try {
-  // ...
-} catch (error) {
-  if (error instanceof KAuthError) {
-    console.log(error.code);    // 에러 코드
-    console.log(error.message); // 한국어 메시지
-    console.log(error.hint);    // 해결 힌트
-  }
-}
-```
-
 ## 환경 변수
 
 ```env
@@ -138,6 +136,10 @@ KAKAO_CLIENT_ID=
 KAKAO_CLIENT_SECRET=
 NAVER_CLIENT_ID=
 NAVER_CLIENT_SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+APPLE_CLIENT_ID=
+APPLE_CLIENT_SECRET=
 
 # NextAuth 필수
 AUTH_SECRET=         # openssl rand -base64 32 로 생성
@@ -151,5 +153,4 @@ AUTH_TRUST_HOST=true # 배포 환경(Vercel 등)에서 필수
 
 ## 링크
 
-- GitHub: https://github.com/k-auth/next
 - npm: https://www.npmjs.com/package/@k-auth/next

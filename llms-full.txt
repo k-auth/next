@@ -1,22 +1,21 @@
 # K-Auth
 
-> 한국형 소셜 로그인 라이브러리 for Next.js
+> 한국형 소셜 로그인 라이브러리 for Next.js (v0.2.0)
 
-K-Auth는 카카오, 네이버 로그인을 Next.js에서 가장 쉽게 구현할 수 있는 라이브러리입니다.
-next-auth(Auth.js)를 래핑하여 한국 개발자를 위한 편의 기능을 제공합니다.
+K-Auth는 카카오, 네이버, 구글, 애플 로그인을 Next.js에서 가장 쉽게 구현할 수 있는 라이브러리입니다.
+next-auth(Auth.js) v5를 래핑하여 한국 개발자를 위한 편의 기능을 제공합니다.
 
-- GitHub: https://github.com/k-auth/next
 - npm: https://www.npmjs.com/package/@k-auth/next
 
 ---
 
 # 주요 기능
 
-- 카카오/네이버 OAuth provider 내장 (next-auth 공식 미지원)
+- 카카오/네이버/구글/애플 OAuth Provider 내장
 - 공식 디자인 가이드를 준수한 로그인 버튼 컴포넌트
 - 한국어 에러 메시지
-- `collectPhone: true` 같은 직관적인 옵션으로 scope 자동 설정
-- next-auth 완벽 호환 (구글, 애플, GitHub 등 함께 사용 가능)
+- `collect: { phone: true }` 같은 직관적인 옵션으로 scope 자동 설정
+- next-auth 완벽 호환 (GitHub, Discord 등 함께 사용 가능)
 
 ---
 
@@ -38,7 +37,7 @@ pnpm add @k-auth/next
 
 K-Auth를 설치하면 다음 패키지들이 자동으로 함께 설치됩니다:
 
-- `next-auth` - 인증 코어
+- `next-auth` v5 - 인증 코어
 - `clsx` - 클래스명 유틸리티
 - `tailwind-merge` - Tailwind 클래스 병합
 
@@ -58,7 +57,7 @@ K-Auth를 설치하면 다음 패키지들이 자동으로 함께 설치됩니�
 
 # 빠른 시작
 
-5분 안에 카카오/네이버 로그인을 구현합니다.
+5분 안에 소셜 로그인을 구현합니다.
 
 ## 1. 환경 변수 설정
 
@@ -72,6 +71,14 @@ KAKAO_CLIENT_SECRET=your_kakao_client_secret
 # 네이버
 NAVER_CLIENT_ID=your_naver_client_id
 NAVER_CLIENT_SECRET=your_naver_client_secret
+
+# 구글
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# 애플
+APPLE_CLIENT_ID=your_apple_services_id
+APPLE_CLIENT_SECRET=your_apple_client_secret_jwt
 
 # NextAuth 필수
 AUTH_SECRET=your_secret_key
@@ -107,6 +114,7 @@ export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
     clientId: process.env.KAKAO_CLIENT_ID!,
     clientSecret: process.env.KAKAO_CLIENT_SECRET!,
+    collect: { email: true, profile: true },
   },
   naver: {
     clientId: process.env.NAVER_CLIENT_ID!,
@@ -183,7 +191,7 @@ http://localhost:3000/login 에 접속하면 로그인 버튼이 보입니다.
 
 ---
 
-# 옵션
+# Provider 설정
 
 K-Auth provider의 모든 설정 옵션입니다.
 
@@ -196,11 +204,16 @@ KAuth({
     clientId: string,
     clientSecret: string,
 
-    // 추가 정보 수집 (선택)
-    collectPhone: boolean,    // 전화번호
-    collectBirth: boolean,    // 생년월일
-    collectGender: boolean,   // 성별
-    collectAgeRange: boolean, // 연령대
+    // 수집 옵션 (선택)
+    collect: {
+      email: boolean,     // 이메일
+      profile: boolean,   // 닉네임, 프로필 이미지
+      phone: boolean,     // 전화번호
+      birthday: boolean,  // 생년월일
+      gender: boolean,    // 성별
+      ageRange: boolean,  // 연령대
+      ci: boolean,        // CI(연계정보) - 카카오싱크 비즈니스 전용
+    },
   },
 });
 ```
@@ -211,10 +224,13 @@ KAuth({
 |------|------|--------|------|
 | `clientId` | `string` | - | 카카오 REST API 키 **(필수)** |
 | `clientSecret` | `string` | - | 카카오 Client Secret **(필수)** |
-| `collectPhone` | `boolean` | `false` | 전화번호 수집 |
-| `collectBirth` | `boolean` | `false` | 생년월일 수집 |
-| `collectGender` | `boolean` | `false` | 성별 수집 |
-| `collectAgeRange` | `boolean` | `false` | 연령대 수집 |
+| `collect.email` | `boolean` | `false` | 이메일 수집 |
+| `collect.profile` | `boolean` | `false` | 프로필(닉네임, 이미지) 수집 |
+| `collect.phone` | `boolean` | `false` | 전화번호 수집 |
+| `collect.birthday` | `boolean` | `false` | 생년월일 수집 |
+| `collect.gender` | `boolean` | `false` | 성별 수집 |
+| `collect.ageRange` | `boolean` | `false` | 연령대 수집 |
+| `collect.ci` | `boolean` | `false` | CI 수집 (비즈니스 전용) |
 
 ### 카카오 추가 정보 수집 예시
 
@@ -223,8 +239,12 @@ KAuth({
   kakao: {
     clientId: process.env.KAKAO_CLIENT_ID!,
     clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-    collectPhone: true,   // scope에 phone_number 자동 추가
-    collectBirth: true,   // scope에 birthday 자동 추가
+    collect: {
+      email: true,     // scope: account_email
+      profile: true,   // scope: profile_nickname, profile_image
+      phone: true,     // scope: phone_number
+      birthday: true,  // scope: birthday, birthyear
+    },
   },
 });
 ```
@@ -240,11 +260,16 @@ KAuth({
     clientId: string,
     clientSecret: string,
 
-    // 추가 정보 수집 (선택)
-    collectPhone: boolean,  // 전화번호
-    collectBirth: boolean,  // 생년월일
-    collectGender: boolean, // 성별
-    collectName: boolean,   // 실명
+    // 수집 옵션 (문서화 목적 - 실제 동작 안 함)
+    collect: {
+      email: boolean,     // 이메일
+      profile: boolean,   // 별명, 프로필 사진
+      phone: boolean,     // 전화번호
+      birthday: boolean,  // 생년월일
+      gender: boolean,    // 성별
+      ageRange: boolean,  // 연령대
+      name: boolean,      // 실명
+    },
   },
 });
 ```
@@ -255,13 +280,83 @@ KAuth({
 |------|------|--------|------|
 | `clientId` | `string` | - | 네이버 Client ID **(필수)** |
 | `clientSecret` | `string` | - | 네이버 Client Secret **(필수)** |
-| `collectPhone` | `boolean` | `false` | 전화번호 수집 |
-| `collectBirth` | `boolean` | `false` | 생년월일 수집 |
-| `collectGender` | `boolean` | `false` | 성별 수집 |
-| `collectName` | `boolean` | `false` | 실명 수집 |
+| `collect.*` | `boolean` | `false` | 문서화 목적 |
 
-네이버는 애플리케이션 등록 시 **제공 정보 선택**에서 미리 체크해야 합니다.
-K-Auth 옵션은 해당 정보를 프로필에서 가져오도록 설정합니다.
+**중요: 네이버는 OAuth scope을 지원하지 않습니다.**
+
+K-Auth의 `collect` 옵션은 코드에서 실제로 동작하지 않으며, 어떤 정보를 수집할 것인지 문서화 목적으로만 제공됩니다. 실제 동의 항목은 [네이버 개발자센터](https://developers.naver.com/apps)에서 **제공 정보 선택**을 직접 설정해야 합니다.
+
+## 구글 옵션
+
+```typescript
+KAuth({
+  google: {
+    // 필수
+    clientId: string,
+    clientSecret: string,
+
+    // 수집 옵션 (선택)
+    collect: {
+      email: boolean,    // 이메일
+      profile: boolean,  // 이름, 프로필 사진
+    },
+
+    // 고급 옵션
+    forceConsent: boolean, // 매번 동의 화면 표시 (기본값: false)
+  },
+});
+```
+
+### 구글 옵션 상세
+
+| 옵션 | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `clientId` | `string` | - | 구글 Client ID **(필수)** |
+| `clientSecret` | `string` | - | 구글 Client Secret **(필수)** |
+| `collect.email` | `boolean` | `false` | 이메일 수집 |
+| `collect.profile` | `boolean` | `false` | 프로필(이름, 사진) 수집 |
+| `forceConsent` | `boolean` | `false` | 매번 동의 화면 표시 |
+
+### forceConsent 옵션
+
+`forceConsent: true`로 설정하면:
+- 매번 사용자에게 동의 화면이 표시됩니다
+- `refresh_token`을 항상 받을 수 있습니다 (access_type: offline)
+- 토큰 갱신이 필요한 백엔드 작업에 유용합니다
+
+## 애플 옵션
+
+```typescript
+KAuth({
+  apple: {
+    // 필수
+    clientId: string,
+    clientSecret: string,
+
+    // 수집 옵션 (선택)
+    collect: {
+      email: boolean,  // 이메일
+      name: boolean,   // 이름 (최초 로그인 시에만 제공)
+    },
+  },
+});
+```
+
+### 애플 옵션 상세
+
+| 옵션 | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `clientId` | `string` | - | 애플 Services ID **(필수)** |
+| `clientSecret` | `string` | - | 애플 Client Secret JWT **(필수)** |
+| `collect.email` | `boolean` | `false` | 이메일 수집 |
+| `collect.name` | `boolean` | `false` | 이름 수집 |
+
+### 애플 주의사항
+
+- 애플은 **최초 로그인 시에만** 사용자 이름을 제공합니다
+- 이후 로그인에서는 이름이 전달되지 않으므로 DB에 저장이 필요합니다
+- `clientSecret`은 Apple Developer Console에서 생성한 JWT입니다
+- 애플 로그인은 **HTTPS가 필수**입니다 (localhost에서 테스트 어려움)
 
 ## 전체 설정 예시
 
@@ -272,215 +367,23 @@ export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
     clientId: process.env.KAKAO_CLIENT_ID!,
     clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-    collectPhone: true,
-    collectBirth: true,
-    collectGender: true,
-  },
-  naver: {
-    clientId: process.env.NAVER_CLIENT_ID!,
-    clientSecret: process.env.NAVER_CLIENT_SECRET!,
-    collectName: true,
-    collectPhone: true,
-  },
-});
-```
-
----
-
-# Providers
-
-K-Auth에서 지원하는 로그인 provider들입니다.
-
-## 내장 Provider
-
-K-Auth에 기본 내장된 provider입니다. 별도 import 없이 바로 사용할 수 있습니다.
-
-### 카카오
-
-```typescript
-KAuth({
-  kakao: {
-    clientId: process.env.KAKAO_CLIENT_ID!,
-    clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-  },
-});
-```
-
-**버튼:**
-```tsx
-<Button.Kakao onClick={() => signIn('kakao')} />
-```
-
-**추가 정보 수집:**
-```typescript
-kakao: {
-  clientId: '...',
-  clientSecret: '...',
-  collectPhone: true,    // 전화번호
-  collectBirth: true,    // 생년월일
-  collectGender: true,   // 성별
-  collectAgeRange: true, // 연령대
-}
-```
-
-### 네이버
-
-```typescript
-KAuth({
-  naver: {
-    clientId: process.env.NAVER_CLIENT_ID!,
-    clientSecret: process.env.NAVER_CLIENT_SECRET!,
-  },
-});
-```
-
-**버튼:**
-```tsx
-<Button.Naver onClick={() => signIn('naver')} />
-```
-
-**추가 정보 수집:**
-```typescript
-naver: {
-  clientId: '...',
-  clientSecret: '...',
-  collectPhone: true,  // 전화번호
-  collectBirth: true,  // 생년월일
-  collectGender: true, // 성별
-  collectName: true,   // 실명
-}
-```
-
-## 외부 Provider
-
-next-auth의 공식 provider를 `nextAuthConfig`로 추가합니다.
-
-### 구글
-
-```typescript
-import Google from 'next-auth/providers/google';
-
-KAuth({
-  kakao: { ... },
-  nextAuthConfig: {
-    providers: [
-      Google({
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      }),
-    ],
-  },
-});
-```
-
-**버튼:**
-```tsx
-<Button.Google onClick={() => signIn('google')} />
-```
-
-**콘솔 설정:**
-1. [Google Cloud Console](https://console.cloud.google.com) 접속
-2. OAuth 동의 화면 설정
-3. 사용자 인증 정보 → OAuth 2.0 클라이언트 ID 생성
-4. Redirect URI: `http://localhost:3000/api/auth/callback/google`
-
-### 애플
-
-```typescript
-import Apple from 'next-auth/providers/apple';
-
-KAuth({
-  kakao: { ... },
-  nextAuthConfig: {
-    providers: [
-      Apple({
-        clientId: process.env.APPLE_CLIENT_ID!,
-        clientSecret: process.env.APPLE_CLIENT_SECRET!,
-      }),
-    ],
-  },
-});
-```
-
-**버튼:**
-```tsx
-<Button.Apple onClick={() => signIn('apple')} />
-```
-
-> 애플 로그인은 HTTPS 필수입니다. localhost에서 테스트가 어렵습니다.
-
-**콘솔 설정:**
-1. [Apple Developer](https://developer.apple.com) 접속
-2. App ID 생성 (Sign in with Apple 활성화)
-3. Services ID 생성
-4. Key 생성 후 Client Secret 생성
-
-자세한 내용은 [Auth.js Apple 문서](https://authjs.dev/getting-started/providers/apple) 참고
-
-### GitHub
-
-```typescript
-import GitHub from 'next-auth/providers/github';
-
-KAuth({
-  kakao: { ... },
-  nextAuthConfig: {
-    providers: [
-      GitHub({
-        clientId: process.env.GITHUB_CLIENT_ID!,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-      }),
-    ],
-  },
-});
-```
-
-**콘솔 설정:**
-1. [GitHub Developer Settings](https://github.com/settings/developers) 접속
-2. OAuth Apps → New OAuth App
-3. Authorization callback URL: `http://localhost:3000/api/auth/callback/github`
-
-## 전체 예시
-
-```typescript
-import { KAuth } from '@k-auth/next';
-import Google from 'next-auth/providers/google';
-import Apple from 'next-auth/providers/apple';
-
-export const { handlers, auth, signIn, signOut } = KAuth({
-  // 한국 서비스 (K-Auth 내장)
-  kakao: {
-    clientId: process.env.KAKAO_CLIENT_ID!,
-    clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-    collectPhone: true,
+    collect: { email: true, profile: true, phone: true },
   },
   naver: {
     clientId: process.env.NAVER_CLIENT_ID!,
     clientSecret: process.env.NAVER_CLIENT_SECRET!,
   },
-  // 글로벌 서비스 (next-auth)
-  nextAuthConfig: {
-    providers: [
-      Google({
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      }),
-      Apple({
-        clientId: process.env.APPLE_CLIENT_ID!,
-        clientSecret: process.env.APPLE_CLIENT_SECRET!,
-      }),
-    ],
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    collect: { email: true, profile: true },
+  },
+  apple: {
+    clientId: process.env.APPLE_CLIENT_ID!,
+    clientSecret: process.env.APPLE_CLIENT_SECRET!,
+    collect: { email: true, name: true },
   },
 });
-```
-
-```tsx
-<Button.Group>
-  <Button.Kakao onClick={() => signIn('kakao')} />
-  <Button.Naver onClick={() => signIn('naver')} />
-  <Button.Google onClick={() => signIn('google')} />
-  <Button.Apple onClick={() => signIn('apple')} />
-</Button.Group>
 ```
 
 ---
@@ -558,6 +461,8 @@ import { signIn } from '@/auth';
 
 <Button.Kakao onClick={() => signIn('kakao')} />
 <Button.Naver onClick={() => signIn('naver')} />
+<Button.Google onClick={() => signIn('google')} />
+<Button.Apple onClick={() => signIn('apple')} />
 ```
 
 ## 디자인 가이드라인
@@ -946,6 +851,8 @@ import { KAuth } from '@k-auth/next';
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: { ... },
   naver: { ... },
+  google: { ... },
+  apple: { ... },
   nextAuthConfig: {
     // next-auth 설정
   },
@@ -954,29 +861,23 @@ export const { handlers, auth, signIn, signOut } = KAuth({
 
 ## 다른 Provider 추가
 
-구글, 애플 등 next-auth 공식 provider를 함께 사용할 수 있습니다.
+next-auth의 공식 provider를 `nextAuthConfig`로 추가합니다.
 
 ```typescript
-import Google from 'next-auth/providers/google';
-import Apple from 'next-auth/providers/apple';
 import GitHub from 'next-auth/providers/github';
+import Discord from 'next-auth/providers/discord';
 
 KAuth({
   kakao: { ... },
-  naver: { ... },
   nextAuthConfig: {
     providers: [
-      Google({
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      }),
-      Apple({
-        clientId: process.env.APPLE_CLIENT_ID!,
-        clientSecret: process.env.APPLE_CLIENT_SECRET!,
-      }),
       GitHub({
         clientId: process.env.GITHUB_CLIENT_ID!,
         clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      }),
+      Discord({
+        clientId: process.env.DISCORD_CLIENT_ID!,
+        clientSecret: process.env.DISCORD_CLIENT_SECRET!,
       }),
     ],
   },
@@ -1074,7 +975,7 @@ KAuth({
 
 ```typescript
 import { KAuth } from '@k-auth/next';
-import Google from 'next-auth/providers/google';
+import GitHub from 'next-auth/providers/github';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/lib/prisma';
 
@@ -1082,18 +983,28 @@ export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
     clientId: process.env.KAKAO_CLIENT_ID!,
     clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-    collectPhone: true,
+    collect: { email: true, profile: true, phone: true },
   },
   naver: {
     clientId: process.env.NAVER_CLIENT_ID!,
     clientSecret: process.env.NAVER_CLIENT_SECRET!,
   },
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    collect: { email: true, profile: true },
+  },
+  apple: {
+    clientId: process.env.APPLE_CLIENT_ID!,
+    clientSecret: process.env.APPLE_CLIENT_SECRET!,
+    collect: { email: true, name: true },
+  },
   nextAuthConfig: {
     adapter: PrismaAdapter(prisma),
     providers: [
-      Google({
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      GitHub({
+        clientId: process.env.GITHUB_CLIENT_ID!,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
       }),
     ],
     callbacks: {
@@ -1137,7 +1048,7 @@ K-Auth는 한국어로 된 친절한 에러 메시지를 제공합니다.
 |------|------|
 | `MISSING_CLIENT_ID` | clientId가 누락됨 |
 | `MISSING_CLIENT_SECRET` | clientSecret이 누락됨 |
-| `NO_PROVIDER_CONFIGURED` | provider가 하나도 설정되지 않음 |
+| `NO_PROVIDERS` | provider가 하나도 설정되지 않음 |
 
 ### 카카오 에러
 
@@ -1220,7 +1131,7 @@ KOE006: Redirect URI가 등록되지 않았습니다
 ```
 
 1. [Kakao Developers](https://developers.kakao.com) 접속
-2. **카카오 로그인** → **Redirect URI**
+2. **카카오 로그인** > **Redirect URI**
 3. URI 추가: `http://localhost:3000/api/auth/callback/kakao`
 
 > 개발용과 배포용 URI를 모두 등록해야 합니다.
@@ -1270,6 +1181,8 @@ KOE006: Redirect URI가 등록되지 않았습니다
 2. **Redirect URI 등록**
    - 카카오: `https://yourdomain.com/api/auth/callback/kakao`
    - 네이버: `https://yourdomain.com/api/auth/callback/naver`
+   - 구글: `https://yourdomain.com/api/auth/callback/google`
+   - 애플: `https://yourdomain.com/api/auth/callback/apple`
 
 3. **네이버 서비스 URL**
    - `https://yourdomain.com`으로 변경
@@ -1294,18 +1207,20 @@ AUTH_TRUST_HOST=true
 ### Vercel 배포 시 환경 변수
 
 Vercel Dashboard에서 환경 변수를 설정하세요:
-1. Project Settings → Environment Variables
+1. Project Settings > Environment Variables
 2. 필요한 변수 모두 추가:
    - `AUTH_SECRET`
    - `AUTH_TRUST_HOST=true`
    - `KAKAO_CLIENT_ID`, `KAKAO_CLIENT_SECRET`
    - `NAVER_CLIENT_ID`, `NAVER_CLIENT_SECRET`
+   - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+   - `APPLE_CLIENT_ID`, `APPLE_CLIENT_SECRET`
 
 ## 버튼 관련
 
 ### 버튼 스타일이 적용되지 않습니다
 
-K-Auth 버튼은 inline styles를 사용합니다. CSS 우선순위 문제가 있다면 `!important`를 사용하세요:
+K-Auth 버튼은 Tailwind CSS 클래스를 사용합니다. CSS 우선순위 문제가 있다면 `!important`를 사용하세요:
 
 ```tsx
 <Button.Kakao className="!w-full" />
@@ -1349,30 +1264,31 @@ declare module 'next-auth' {
 
 ### K-Auth와 next-auth의 차이점은?
 
-K-Auth는 next-auth를 래핑한 라이브러리입니다. next-auth의 모든 기능을 사용하면서 카카오/네이버 로그인을 더 쉽게 구현할 수 있습니다.
+K-Auth는 next-auth를 래핑한 라이브러리입니다. next-auth의 모든 기능을 사용하면서 카카오/네이버/구글/애플 로그인을 더 쉽게 구현할 수 있습니다.
 
 | 기능 | next-auth | K-Auth |
 |------|-----------|--------|
 | 카카오/네이버 provider | 직접 구현 필요 | 내장 |
+| 구글/애플 provider | 내장 | 내장 + 간소화된 설정 |
 | 로그인 버튼 | 직접 구현 필요 | 제공 |
 | 에러 메시지 | 영어 | 한국어 |
-| scope 설정 | 직접 입력 | `collectPhone: true` |
+| scope 설정 | 직접 입력 | `collect: { phone: true }` |
 
 ### next-auth를 따로 설치해야 하나요?
 
 아니요. K-Auth를 설치하면 next-auth가 자동으로 함께 설치됩니다.
 
-### 구글, GitHub 등 다른 로그인도 쓸 수 있나요?
+### GitHub, Discord 등 다른 로그인도 쓸 수 있나요?
 
 네. `nextAuthConfig`에 next-auth provider를 추가하면 됩니다.
 
 ```typescript
-import Google from 'next-auth/providers/google';
+import GitHub from 'next-auth/providers/github';
 
 KAuth({
   kakao: { ... },
   nextAuthConfig: {
-    providers: [Google({ ... })],
+    providers: [GitHub({ ... })],
   },
 });
 ```
@@ -1385,7 +1301,7 @@ KAuth({
 
 ### Tailwind CSS가 필요한가요?
 
-기본 버튼 스타일은 Tailwind 없이도 동작합니다. `className` prop으로 커스텀하려면 Tailwind가 필요합니다.
+기본 버튼 스타일은 Tailwind 클래스를 사용하지만, Tailwind 없이도 동작합니다. `className` prop으로 커스텀하려면 Tailwind가 필요합니다.
 
 ### 버튼 색상을 바꿀 수 있나요?
 
@@ -1393,7 +1309,11 @@ KAuth({
 
 ### 버튼 텍스트를 변경할 수 있나요?
 
-현재는 지원하지 않습니다. 각 서비스 가이드라인에서 권장하는 텍스트를 사용합니다.
+`children` prop을 사용하여 텍스트를 변경할 수 있습니다:
+
+```tsx
+<Button.Kakao>카카오로 시작하기</Button.Kakao>
+```
 
 ## 에러
 
@@ -1402,16 +1322,19 @@ KAuth({
 개발자 콘솔에서 Redirect URI를 등록해야 합니다:
 - 카카오: `http://localhost:3000/api/auth/callback/kakao`
 - 네이버: `http://localhost:3000/api/auth/callback/naver`
+- 구글: `http://localhost:3000/api/auth/callback/google`
+- 애플: `https://yourdomain.com/api/auth/callback/apple` (HTTPS 필수)
 
 ### "동의 항목이 비활성화되어 있습니다" 에러
 
-`collectPhone: true` 등의 옵션을 사용하려면 개발자 콘솔에서 해당 동의 항목을 먼저 활성화해야 합니다.
+`collect: { phone: true }` 등의 옵션을 사용하려면 개발자 콘솔에서 해당 동의 항목을 먼저 활성화해야 합니다.
 
 ### 배포 후 로그인이 안 됩니다
 
 1. `AUTH_SECRET` 환경 변수가 설정되어 있는지 확인
-2. 개발자 콘솔에서 배포 도메인의 Redirect URI 등록 확인
-3. 네이버: 서비스 URL도 배포 도메인으로 변경 필요
+2. `AUTH_TRUST_HOST=true` 설정 확인
+3. 개발자 콘솔에서 배포 도메인의 Redirect URI 등록 확인
+4. 네이버: 서비스 URL도 배포 도메인으로 변경 필요
 
 ## 데이터베이스
 
@@ -1461,6 +1384,8 @@ export default function LoginPage() {
         <Button.Group>
           <Button.Kakao onClick={() => signIn('kakao')} />
           <Button.Naver onClick={() => signIn('naver')} />
+          <Button.Google onClick={() => signIn('google')} />
+          <Button.Apple onClick={() => signIn('apple')} />
         </Button.Group>
       </div>
     </div>
@@ -1532,25 +1457,33 @@ export const config = {
 ```typescript
 // auth.ts
 import { KAuth } from '@k-auth/next';
-import Google from 'next-auth/providers/google';
+import GitHub from 'next-auth/providers/github';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
     clientId: process.env.KAKAO_CLIENT_ID!,
     clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-    collectPhone: true,
-    collectBirth: true,
+    collect: { email: true, profile: true, phone: true },
   },
   naver: {
     clientId: process.env.NAVER_CLIENT_ID!,
     clientSecret: process.env.NAVER_CLIENT_SECRET!,
-    collectName: true,
+  },
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    collect: { email: true, profile: true },
+  },
+  apple: {
+    clientId: process.env.APPLE_CLIENT_ID!,
+    clientSecret: process.env.APPLE_CLIENT_SECRET!,
+    collect: { email: true, name: true },
   },
   nextAuthConfig: {
     providers: [
-      Google({
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      GitHub({
+        clientId: process.env.GITHUB_CLIENT_ID!,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
       }),
     ],
     callbacks: {
