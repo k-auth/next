@@ -6,18 +6,16 @@
 
 ## 특징
 
-- **10초 설정** - 복잡한 OAuth 설정 대신 `clientId`와 `clientSecret`만 입력
+- **10초 설정** - 복잡한 OAuth 설정 없이 바로 시작
 - **디자인 0초** - 공식 가이드 준수 버튼 컴포넌트 제공
-- **타입 안전** - TypeScript 완벽 지원, IDE 자동완성
+- **타입 안전** - TypeScript 완벽 지원
 - **한글 에러** - 친절한 한국어 에러 메시지
 
 ## 설치
 
 ```bash
-npm install k-auth next-auth@beta
+npm install k-auth
 ```
-
-> next-auth v5 기준으로 동작합니다.
 
 ## 빠른 시작
 
@@ -25,31 +23,15 @@ npm install k-auth next-auth@beta
 
 ```typescript
 import { KAuth } from 'k-auth';
-import Google from 'next-auth/providers/google';
-import Apple from 'next-auth/providers/apple';
 
 export const { handlers, auth, signIn, signOut } = KAuth({
   kakao: {
     clientId: process.env.KAKAO_CLIENT_ID!,
     clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-    collectPhone: true,
   },
   naver: {
     clientId: process.env.NAVER_CLIENT_ID!,
     clientSecret: process.env.NAVER_CLIENT_SECRET!,
-  },
-  // 구글/애플은 next-auth provider 사용
-  nextAuthConfig: {
-    providers: [
-      Google({
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      }),
-      Apple({
-        clientId: process.env.APPLE_CLIENT_ID!,
-        clientSecret: process.env.APPLE_CLIENT_SECRET!,
-      }),
-    ],
   },
 });
 ```
@@ -73,119 +55,88 @@ export default function LoginPage() {
     <Button.Group>
       <Button.Kakao onClick={() => signIn('kakao')} />
       <Button.Naver onClick={() => signIn('naver')} />
-      <Button.Google onClick={() => signIn('google')} />
-      <Button.Apple onClick={() => signIn('apple')} />
     </Button.Group>
   );
 }
 ```
 
-끝! 이게 전부입니다.
+끝!
 
-## UI 컴포넌트
+## 구글/애플 추가하기
 
-### 지원하는 버튼
+```typescript
+import { KAuth } from 'k-auth';
+import Google from 'next-auth/providers/google';
+import Apple from 'next-auth/providers/apple';
 
-```tsx
-import { Button } from 'k-auth/ui';
-
-<Button.Kakao />   // 카카오 노란색
-<Button.Naver />   // 네이버 초록색
-<Button.Google />  // 구글 흰색
-<Button.Apple />   // 애플 검은색
+export const { handlers, auth, signIn, signOut } = KAuth({
+  kakao: { ... },
+  naver: { ... },
+  nextAuthConfig: {
+    providers: [
+      Google({ clientId: '...', clientSecret: '...' }),
+      Apple({ clientId: '...', clientSecret: '...' }),
+    ],
+  },
+});
 ```
 
-### 크기 옵션
-
 ```tsx
-<Button.Kakao size="sm" />    // 작게
-<Button.Kakao size="default" /> // 기본
-<Button.Kakao size="lg" />    // 크게
-<Button.Kakao size="icon" />  // 아이콘만
-```
-
-### Button.Group
-
-```tsx
-// 세로 배치 (기본)
 <Button.Group>
+  <Button.Kakao onClick={() => signIn('kakao')} />
+  <Button.Naver onClick={() => signIn('naver')} />
+  <Button.Google onClick={() => signIn('google')} />
+  <Button.Apple onClick={() => signIn('apple')} />
+</Button.Group>
+```
+
+## 버튼 컴포넌트
+
+### 지원 버튼
+
+```tsx
+<Button.Kakao />   // 카카오 (노란색)
+<Button.Naver />   // 네이버 (초록색)
+<Button.Google />  // 구글 (흰색)
+<Button.Apple />   // 애플 (검은색)
+```
+
+### 크기
+
+```tsx
+<Button.Kakao size="sm" />      // 작게
+<Button.Kakao size="default" /> // 기본
+<Button.Kakao size="lg" />      // 크게
+<Button.Kakao size="icon" />    // 아이콘만
+```
+
+### 그룹
+
+```tsx
+<Button.Group direction="column" gap="md">
   <Button.Kakao />
   <Button.Naver />
 </Button.Group>
-
-// 가로 배치
-<Button.Group direction="row">
-  <Button.Kakao size="icon" />
-  <Button.Naver size="icon" />
-</Button.Group>
-
-// 간격 조절
-<Button.Group gap="sm" />  // 좁게
-<Button.Group gap="lg" />  // 넓게
 ```
 
-## API
-
-### KAuth(config)
+## 추가 데이터 수집
 
 ```typescript
 KAuth({
-  kakao?: KakaoOptions,
-  naver?: NaverOptions,
-  nextAuthConfig?: NextAuthConfig,  // 구글/애플 등 추가
-})
-```
-
-### KakaoOptions
-
-| 옵션 | 타입 | 설명 |
-|------|------|------|
-| `clientId` | `string` | 카카오 REST API 키 |
-| `clientSecret` | `string` | 카카오 Client Secret |
-| `collectPhone` | `boolean` | 전화번호 수집 |
-| `collectBirth` | `boolean` | 생년월일 수집 |
-| `collectGender` | `boolean` | 성별 수집 |
-| `collectAgeRange` | `boolean` | 연령대 수집 |
-
-### NaverOptions
-
-| 옵션 | 타입 | 설명 |
-|------|------|------|
-| `clientId` | `string` | 네이버 Client ID |
-| `clientSecret` | `string` | 네이버 Client Secret |
-| `collectPhone` | `boolean` | 전화번호 수집 |
-| `collectBirth` | `boolean` | 생년월일 수집 |
-| `collectGender` | `boolean` | 성별 수집 |
-| `collectName` | `boolean` | 실명 수집 |
-
-## 환경 변수
-
-```env
-# 카카오
-KAKAO_CLIENT_ID=your_kakao_rest_api_key
-KAKAO_CLIENT_SECRET=your_kakao_client_secret
-
-# 네이버
-NAVER_CLIENT_ID=your_naver_client_id
-NAVER_CLIENT_SECRET=your_naver_client_secret
-
-# 구글
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-# 애플
-APPLE_CLIENT_ID=your_apple_client_id
-APPLE_CLIENT_SECRET=your_apple_client_secret
-
-# NextAuth
-AUTH_SECRET=your_random_secret_key
+  kakao: {
+    clientId: '...',
+    clientSecret: '...',
+    collectPhone: true,    // 전화번호
+    collectBirth: true,    // 생년월일
+    collectGender: true,   // 성별
+  },
+});
 ```
 
 ## 요구사항
 
 - Next.js 14+
 - React 18+
-- next-auth 5 (beta)
 
 ## 라이센스
 
