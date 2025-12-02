@@ -1,0 +1,79 @@
+# K-Auth
+
+> 한국형 소셜 로그인 라이브러리 for Next.js
+
+K-Auth는 카카오, 네이버 로그인을 Next.js에서 가장 쉽게 구현할 수 있는 라이브러리입니다.
+next-auth를 래핑하여 한국 개발자를 위한 편의 기능을 제공합니다.
+
+## 주요 기능
+
+- 카카오/네이버 OAuth provider 제공 (next-auth 공식 미지원)
+- 공식 디자인 가이드를 준수한 로그인 버튼 컴포넌트
+- 한국어 에러 메시지
+- `collectPhone: true` 같은 직관적인 옵션으로 scope 자동 설정
+
+## 설치
+
+```bash
+npm install @relkimm/k-auth
+```
+
+## 빠른 시작
+
+```typescript
+// auth.ts
+import { KAuth } from 'k-auth';
+
+export const { handlers, auth, signIn, signOut } = KAuth({
+  kakao: {
+    clientId: process.env.KAKAO_CLIENT_ID!,
+    clientSecret: process.env.KAKAO_CLIENT_SECRET!,
+  },
+  naver: {
+    clientId: process.env.NAVER_CLIENT_ID!,
+    clientSecret: process.env.NAVER_CLIENT_SECRET!,
+  },
+});
+```
+
+```tsx
+// 로그인 페이지
+import { Button } from 'k-auth/ui';
+
+<Button.Group>
+  <Button.Kakao onClick={() => signIn('kakao')} />
+  <Button.Naver onClick={() => signIn('naver')} />
+</Button.Group>
+```
+
+## API
+
+### KAuth(config)
+- `kakao.clientId` - 카카오 REST API 키
+- `kakao.clientSecret` - 카카오 Client Secret
+- `kakao.collectPhone` - 전화번호 수집 (scope 자동 추가)
+- `kakao.collectBirth` - 생년월일 수집
+- `kakao.collectGender` - 성별 수집
+- `naver.clientId` - 네이버 Client ID
+- `naver.clientSecret` - 네이버 Client Secret
+- `naver.collectPhone` - 전화번호 수집
+- `naver.collectBirth` - 생년월일 수집
+- `nextAuthConfig` - next-auth 고급 설정 (구글, 애플 등 추가)
+
+### Button 컴포넌트
+- `Button.Kakao` - 카카오 로그인 버튼
+- `Button.Naver` - 네이버 로그인 버튼
+- `Button.Google` - 구글 로그인 버튼
+- `Button.Apple` - 애플 로그인 버튼
+- `Button.Group` - 버튼 그룹 (direction, gap 옵션)
+
+### 크기 옵션
+- `size="sm"` - 작은 버튼
+- `size="default"` - 기본 크기
+- `size="lg"` - 큰 버튼
+- `size="icon"` - 아이콘만
+
+## 링크
+
+- GitHub: https://github.com/relkimm/k-auth
+- npm: https://www.npmjs.com/package/k-auth

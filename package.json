@@ -1,30 +1,31 @@
 {
-  "name": "k-auth",
+  "name": "@relkimm/k-auth",
   "version": "0.1.0",
   "description": "한국형 소셜 로그인, 설정 10초 & 디자인 0초",
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./providers": {
       "types": "./dist/providers/index.d.ts",
-      "import": "./dist/providers/index.mjs",
-      "require": "./dist/providers/index.js"
+      "import": "./dist/providers/index.js",
+      "require": "./dist/providers/index.cjs"
     },
     "./ui": {
       "types": "./dist/ui/index.d.ts",
-      "import": "./dist/ui/index.mjs",
-      "require": "./dist/ui/index.js"
+      "import": "./dist/ui/index.js",
+      "require": "./dist/ui/index.cjs"
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "llms.txt"
   ],
   "scripts": {
     "build": "tsup",
@@ -37,17 +38,37 @@
   },
   "keywords": [
     "next-auth",
+    "nextjs",
     "auth",
+    "authentication",
     "kakao",
+    "kakao-login",
     "naver",
+    "naver-login",
     "google",
     "apple",
     "korea",
+    "korean",
     "social-login",
-    "oauth"
+    "oauth",
+    "oauth2",
+    "login",
+    "sign-in",
+    "react",
+    "카카오",
+    "네이버",
+    "소셜로그인"
   ],
-  "author": "",
+  "author": "relkimm",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/relkimm/k-auth.git"
+  },
+  "bugs": {
+    "url": "https://github.com/relkimm/k-auth/issues"
+  },
+  "homepage": "https://github.com/relkimm/k-auth#readme",
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
