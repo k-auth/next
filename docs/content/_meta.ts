@@ -1,0 +1,36 @@
+export default {
+  index: '소개',
+  '-- Getting Started': {
+    type: 'separator',
+    title: '시작하기',
+  },
+  installation: '설치',
+  'quick-start': '빠른 시작',
+  'console-setup': '콘솔 설정',
+  '-- Components': {
+    type: 'separator',
+    title: '컴포넌트',
+  },
+  buttons: '버튼',
+  '-- Configuration': {
+    type: 'separator',
+    title: '설정',
+  },
+  providers: 'Provider',
+  options: '옵션',
+  'nextauth-config': 'NextAuth 연동',
+  '-- Advanced': {
+    type: 'separator',
+    title: '고급',
+  },
+  session: '세션 관리',
+  middleware: '미들웨어',
+  errors: '에러 처리',
+  '-- Resources': {
+    type: 'separator',
+    title: '참고',
+  },
+  examples: '예제',
+  faq: '자주 묻는 질문',
+  troubleshooting: '문제 해결',
+};

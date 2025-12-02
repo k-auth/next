@@ -33,12 +33,16 @@ import { Button } from '@k-auth/next/ui';
 <Button.Group>
   <Button.Kakao />
   <Button.Naver />
+  <Button.Google />
+  <Button.Apple />
 </Button.Group>
 
 // 가로 배치
 <Button.Group direction="row">
   <Button.Kakao size="icon" />
   <Button.Naver size="icon" />
+  <Button.Google size="icon" />
+  <Button.Apple size="icon" />
 </Button.Group>
 
 // 간격 조절
@@ -71,6 +75,17 @@ import { signIn } from '@/auth';
 
 <Button.Kakao onClick={() => signIn('kakao')} />
 <Button.Naver onClick={() => signIn('naver')} />
+<Button.Google onClick={() => signIn('google')} />
+<Button.Apple onClick={() => signIn('apple')} />
+```
+
+## 버튼 텍스트 변경
+
+`children` prop으로 버튼 텍스트를 변경할 수 있습니다.
+
+```tsx
+<Button.Kakao>카카오로 시작하기</Button.Kakao>
+<Button.Google>Google로 계속하기</Button.Google>
 ```
 
 ## 디자인 가이드라인
@@ -79,3 +94,11 @@ K-Auth 버튼은 각 서비스의 공식 가이드라인을 따릅니다:
 
 - [카카오 로그인 디자인 가이드](https://developers.kakao.com/docs/latest/ko/kakaologin/design-guide)
 - [네이버 로그인 디자인 가이드](https://developers.naver.com/docs/login/bi/)
+- [Google Sign-In 브랜딩 가이드](https://developers.google.com/identity/branding-guidelines)
+- [Sign in with Apple 가이드라인](https://developer.apple.com/design/human-interface-guidelines/sign-in-with-apple)
+
+import { Callout } from 'nextra/components'
+
+<Callout type="info">
+각 서비스의 디자인 가이드라인을 준수하기 위해 기본 색상 변경은 지원하지 않습니다. `className`으로 크기, 모서리, 그림자 등은 조절할 수 있습니다.
+</Callout>

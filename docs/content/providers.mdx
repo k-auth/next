@@ -1,0 +1,223 @@
+# Providers
+
+K-Auth에서 지원하는 로그인 provider들입니다.
+
+## 내장 Provider
+
+K-Auth에 기본 내장된 4대 provider입니다. 별도 import 없이 바로 사용할 수 있습니다.
+
+### 카카오
+
+```typescript
+KAuth({
+  kakao: {
+    clientId: process.env.KAKAO_CLIENT_ID!,
+    clientSecret: process.env.KAKAO_CLIENT_SECRET!,
+  },
+});
+```
+
+**버튼:**
+```tsx
+<Button.Kakao onClick={() => signIn('kakao')} />
+```
+
+**추가 정보 수집:**
+```typescript
+kakao: {
+  clientId: '...',
+  clientSecret: '...',
+  collect: {
+    email: true,      // 이메일
+    profile: true,    // 닉네임, 프로필 이미지
+    phone: true,      // 전화번호
+    birthday: true,   // 생년월일
+    gender: true,     // 성별
+    ageRange: true,   // 연령대
+    ci: true,         // CI (카카오싱크 비즈니스 전용)
+  },
+}
+```
+
+### 네이버
+
+```typescript
+KAuth({
+  naver: {
+    clientId: process.env.NAVER_CLIENT_ID!,
+    clientSecret: process.env.NAVER_CLIENT_SECRET!,
+  },
+});
+```
+
+**버튼:**
+```tsx
+<Button.Naver onClick={() => signIn('naver')} />
+```
+
+**추가 정보 수집:**
+
+import { Callout } from 'nextra/components'
+
+<Callout type="warning">
+네이버는 OAuth scope을 지원하지 않습니다. [네이버 개발자센터](https://developers.naver.com/apps)에서 **제공 정보 선택**을 직접 설정해야 합니다.
+</Callout>
+
+```typescript
+naver: {
+  clientId: '...',
+  clientSecret: '...',
+  // 문서화 목적 (실제 동작 안 함)
+  collect: {
+    email: true,     // 이메일
+    profile: true,   // 별명, 프로필 사진
+    phone: true,     // 전화번호
+    birthday: true,  // 생년월일
+    gender: true,    // 성별
+    name: true,      // 실명
+  },
+}
+```
+
+### 구글
+
+```typescript
+KAuth({
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+  },
+});
+```
+
+**버튼:**
+```tsx
+<Button.Google onClick={() => signIn('google')} />
+```
+
+**추가 정보 수집:**
+```typescript
+google: {
+  clientId: '...',
+  clientSecret: '...',
+  collect: {
+    email: true,    // 이메일
+    profile: true,  // 이름, 프로필 사진
+  },
+  forceConsent: true, // 매번 동의 화면 표시 (refresh_token 획득용)
+}
+```
+
+**콘솔 설정:**
+1. [Google Cloud Console](https://console.cloud.google.com) 접속
+2. OAuth 동의 화면 설정
+3. 사용자 인증 정보 → OAuth 2.0 클라이언트 ID 생성
+4. Redirect URI: `http://localhost:3000/api/auth/callback/google`
+
+### 애플
+
+```typescript
+KAuth({
+  apple: {
+    clientId: process.env.APPLE_CLIENT_ID!,
+    clientSecret: process.env.APPLE_CLIENT_SECRET!,
+  },
+});
+```
+
+**버튼:**
+```tsx
+<Button.Apple onClick={() => signIn('apple')} />
+```
+
+**추가 정보 수집:**
+```typescript
+apple: {
+  clientId: '...',
+  clientSecret: '...',
+  collect: {
+    email: true,  // 이메일
+    name: true,   // 이름 (최초 로그인 시에만 제공)
+  },
+}
+```
+
+<Callout type="warning">
+애플 로그인은 HTTPS가 필수입니다. localhost에서 테스트가 어렵습니다.
+</Callout>
+
+<Callout type="info">
+애플은 **최초 로그인 시에만** 사용자 이름을 제공합니다. 이후 로그인에서는 이름이 전달되지 않으므로 DB에 저장이 필요합니다.
+</Callout>
+
+**콘솔 설정:**
+1. [Apple Developer](https://developer.apple.com) 접속
+2. App ID 생성 (Sign in with Apple 활성화)
+3. Services ID 생성
+4. Key 생성 후 Client Secret 생성
+
+자세한 내용은 [Auth.js Apple 문서](https://authjs.dev/getting-started/providers/apple) 참고
+
+## 외부 Provider 추가
+
+K-Auth에 내장되지 않은 provider는 `nextAuthConfig`를 통해 next-auth 공식 provider를 추가할 수 있습니다.
+
+```typescript
+import GitHub from 'next-auth/providers/github';
+import Discord from 'next-auth/providers/discord';
+
+KAuth({
+  kakao: { ... },
+  nextAuthConfig: {
+    providers: [
+      GitHub({
+        clientId: process.env.GITHUB_CLIENT_ID!,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      }),
+      Discord({
+        clientId: process.env.DISCORD_CLIENT_ID!,
+        clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+      }),
+    ],
+  },
+});
+```
+
+지원되는 모든 provider 목록은 [Auth.js Providers 문서](https://authjs.dev/getting-started/providers)를 참고하세요.
+
+## 전체 예시
+
+```typescript
+import { KAuth } from '@k-auth/next';
+
+export const { handlers, auth, signIn, signOut } = KAuth({
+  kakao: {
+    clientId: process.env.KAKAO_CLIENT_ID!,
+    clientSecret: process.env.KAKAO_CLIENT_SECRET!,
+    collect: { email: true, profile: true, phone: true },
+  },
+  naver: {
+    clientId: process.env.NAVER_CLIENT_ID!,
+    clientSecret: process.env.NAVER_CLIENT_SECRET!,
+  },
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    collect: { email: true, profile: true },
+  },
+  apple: {
+    clientId: process.env.APPLE_CLIENT_ID!,
+    clientSecret: process.env.APPLE_CLIENT_SECRET!,
+    collect: { email: true, name: true },
+  },
+});
+```
+
+```tsx
+<Button.Group>
+  <Button.Kakao onClick={() => signIn('kakao')} />
+  <Button.Naver onClick={() => signIn('naver')} />
+  <Button.Google onClick={() => signIn('google')} />
+  <Button.Apple onClick={() => signIn('apple')} />
+</Button.Group>
+```
