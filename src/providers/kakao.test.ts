@@ -7,7 +7,7 @@ describe('Kakao Provider', () => {
     clientSecret: 'test-client-secret',
   };
 
-  it('기본 설정으로 Provider를 생성해야 함', () => {
+  it('기본 설정으로 Provider를 생성한다', () => {
     const provider = Kakao(baseOptions);
 
     expect(provider.id).toBe('kakao');
@@ -15,7 +15,7 @@ describe('Kakao Provider', () => {
     expect(provider.type).toBe('oauth');
   });
 
-  it('기본 scope를 포함해야 함', () => {
+  it('기본 scope를 포함한다', () => {
     const provider = Kakao(baseOptions);
     const authParams = provider.authorization as { url: string; params: { scope: string } };
 
@@ -24,14 +24,14 @@ describe('Kakao Provider', () => {
     expect(authParams.params.scope).toContain('account_email');
   });
 
-  it('collectPhone 옵션이 true면 phone_number scope를 추가해야 함', () => {
+  it('collectPhone이 true면 phone_number scope를 추가한다', () => {
     const provider = Kakao({ ...baseOptions, collectPhone: true });
     const authParams = provider.authorization as { url: string; params: { scope: string } };
 
     expect(authParams.params.scope).toContain('phone_number');
   });
 
-  it('collectBirth 옵션이 true면 birthday, birthyear scope를 추가해야 함', () => {
+  it('collectBirth가 true면 birthday, birthyear scope를 추가한다', () => {
     const provider = Kakao({ ...baseOptions, collectBirth: true });
     const authParams = provider.authorization as { url: string; params: { scope: string } };
 
@@ -39,14 +39,14 @@ describe('Kakao Provider', () => {
     expect(authParams.params.scope).toContain('birthyear');
   });
 
-  it('collectGender 옵션이 true면 gender scope를 추가해야 함', () => {
+  it('collectGender가 true면 gender scope를 추가한다', () => {
     const provider = Kakao({ ...baseOptions, collectGender: true });
     const authParams = provider.authorization as { url: string; params: { scope: string } };
 
     expect(authParams.params.scope).toContain('gender');
   });
 
-  it('여러 옵션을 동시에 설정할 수 있어야 함', () => {
+  it('여러 옵션을 동시에 처리한다', () => {
     const provider = Kakao({
       ...baseOptions,
       collectPhone: true,
